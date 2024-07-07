@@ -8,7 +8,7 @@ builder.mutationField('createAuthToken', (t) =>
   t.prismaField({
     type: AuthToken,
     authScopes: {
-      userRequired: true
+      newUser: true
     },
     resolve: async (query, info, _, ctx) => {
       const user = await prisma.user.findFirst({
