@@ -1,0 +1,26 @@
+{
+  "name": "platform",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "aarontravass <aaron.travass@hotmail.com>",
+  "homepage": "https://github.com/aarontravass/medihacks2024#readme",
+  "license": "MIT",
+  "main": "lib/platform.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aarontravass/medihacks2024.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/platform.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/aarontravass/medihacks2024/issues"
+  }
+}
