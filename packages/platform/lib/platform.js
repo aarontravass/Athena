@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-module.exports = platform;
+module.exports = platform
 
 function platform() {
-  return 'Hello from platform';
+  return 'Hello from platform'
 }

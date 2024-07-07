@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 
-module.exports = web;
+module.exports = web
 
 function web() {
-  return 'Hello from web';
+  return 'Hello from web'
 }
