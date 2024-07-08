@@ -1,0 +1,30 @@
+{
+  "name": "@medihacks/prisma",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "aarontravass <aaron.travass@hotmail.com>",
+  "homepage": "https://github.com/aarontravass/medihacks2024#readme",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aarontravass/medihacks2024.git"
+  },
+  "scripts": {
+    "generate": "prisma generate",
+    "migrate:dev": "hcp vault-secrets run -- prisma migrate dev --name init",
+    "migrate:deploy": "prisma migrate deploy"
+  },
+  "bugs": {
+    "url": "https://github.com/aarontravass/medihacks2024/issues"
+  },
+  "dependencies": {
+    "@pothos/plugin-prisma": "^3.65.3",
+    "@prisma/client": "^5.16.1",
+    "prisma": "^5.16.1"
+  }
+}

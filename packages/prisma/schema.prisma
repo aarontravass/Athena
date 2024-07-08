@@ -1,0 +1,55 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "./dist"
+  previewFeatures = ["relationJoins"]
+}
+
+generator pothos {
+  provider     = "prisma-pothos-types"
+  clientOutput = "./dist"
+  output       = "./pothos-types.ts"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  Patient
+  Doctor
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String
+  name         String?
+  privyDid     String        @unique
+  role         UserRole
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  authTokens   AuthToken[]
+  patientFiles PatientFile[]
+}
+
+model AuthToken {
+  id           Int      @id @default(autoincrement())
+  authToken    String   @unique
+  refreshToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model PatientFile {
+  id         String   @id @default(uuid())
+  ipfsCid    String
+  bucketName String
+  fileName   String
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
