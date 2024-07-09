@@ -10,3 +10,4 @@ export const PRIVY_APP_SECRET = process.env.PRIVY_APP_SECRET
 export const JWT_KEY = process.env.JWT_KEY
 export const FILEBASE_ACCESS_KEY_ID = process.env.FILEBASE_ACCESS_KEY_ID
 export const FILEBASE_SECRET_ACCESS_KEY = process.env.FILEBASE_SECRET_ACCESS_KEY
+export const FILEBASE_S3_URL = 'https://s3.filebase.com'

@@ -10,7 +10,7 @@ builder.mutationField('createAuthToken', (t) =>
     authScopes: {
       newUser: true
     },
-    resolve: async (query, info, _, ctx) => {
+    resolve: async (query, root, _, ctx) => {
       const user = await prisma.user.findFirst({
         where: {
           privyDid: ctx.privyDid
