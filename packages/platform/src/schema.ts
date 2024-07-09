@@ -1,5 +1,4 @@
 // User
-import './resolvers/User/mutations/registerUser'
 import './resolvers/User/queries/fetchUser'
 
 // AuthToken
