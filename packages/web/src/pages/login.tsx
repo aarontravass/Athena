@@ -4,27 +4,28 @@ import Head from 'next/head'
 import { useState } from 'react'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
-import { PRIVY_APP_NAME } from './contants'
+import { APP_NAME, PRIVY_APP_NAME } from './contants'
 import Image from 'next/image'
 import loginSideImage from '@/../public/loginSideImage.png'
 import mainLogo from '@/../public/mainLogo.png'
-
-const REGISTER_PATIENT_USER = gql`
-  mutation RegisterUser {
-    registerUser {
-      email
-      id
-      name
-    }
-  }
-`
+import { useRouter } from 'next/router'
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const router = useRouter()
 
   const { ready, getAccessToken } = usePrivy()
+
+  const REGISTER_PATIENT_USER = gql`
+    mutation createAuthToken($role: UserRole!) {
+      createAuthToken(role: $role) {
+        authToken
+        refreshToken
+      }
+    }
+  `
   const disableLogin = !ready
 
   const [registerUser, { data, loading, error }] = useMutation(REGISTER_PATIENT_USER, {
@@ -33,8 +34,13 @@ const LoginPage = (): JSX.Element => {
 
   const handleRegister = async () => {
     try {
-      await registerUser()
-        .then()
+      const role = isPatient ? 'Patient' : 'Doctor'
+      await registerUser({ variables: { role } })
+        .then((result) => {
+          localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
+          localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+          router.push('/dashboard')
+        })
         .catch((error) => {
           console.error({ error })
           setErrorMessage(error?.message)
@@ -52,7 +58,7 @@ const LoginPage = (): JSX.Element => {
     onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
       console.log({ user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount })
       const accessToken = await getAccessToken()
-      if (accessToken) localStorage.setItem('privyAuthToken', accessToken)
+      if (accessToken) localStorage.setItem(PRIVY_APP_NAME, accessToken)
       handleRegister()
       setIsLoading(false)
     },
