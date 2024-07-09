@@ -12,7 +12,7 @@ import { useRouter } from 'next/router'
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const router = useRouter()
 
@@ -28,7 +28,7 @@ const LoginPage = (): JSX.Element => {
   `
   const disableLogin = !ready
 
-  const [registerUser, { data, loading, error }] = useMutation(REGISTER_PATIENT_USER, {
+  const [registerUser, { data, error }] = useMutation(REGISTER_PATIENT_USER, {
     context: { appTokenName: PRIVY_APP_NAME }
   })
 
@@ -47,6 +47,7 @@ const LoginPage = (): JSX.Element => {
         })
     } catch (e) {
       console.error(e)
+      setIsLoading(false)
     }
   }
 
@@ -56,6 +57,7 @@ const LoginPage = (): JSX.Element => {
 
   const { login } = useLogin({
     onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
+      setIsLoading(true)
       console.log({ user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount })
       const accessToken = await getAccessToken()
       if (accessToken) localStorage.setItem(PRIVY_APP_NAME, accessToken)
@@ -70,11 +72,17 @@ const LoginPage = (): JSX.Element => {
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    if (loading) return
+    if (isLoading) return
     setIsLoading(true)
     login()
   }
-
+  if (!ready || !isLoading)
+    return (
+      <div className="flex items-center justify-center h-screen">
+        {/* <LoadingSpinner size="large" /> */}
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    )
   return (
     <>
       <Head>
