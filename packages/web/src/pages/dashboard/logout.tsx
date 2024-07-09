@@ -1,9 +1,14 @@
-import { usePrivy } from '@privy-io/react-auth'
+import { useLogout, usePrivy } from '@privy-io/react-auth'
 
 import React from 'react'
 
 const LogoutPage = () => {
-  const { ready, authenticated, logout } = usePrivy()
+  const { ready, authenticated } = usePrivy()
+  const { logout } = useLogout({
+    onSuccess: () => {
+      console.log('Logout successful')
+    }
+  })
   const disableLogout = !ready || (ready && !authenticated)
 
   return (
