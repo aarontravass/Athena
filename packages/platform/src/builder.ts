@@ -1,4 +1,4 @@
-import { Prisma } from '@medihacks/prisma'
+import { Prisma, UserRole } from '@medihacks/prisma'
 import SchemaBuilder from '@pothos/core'
 import PrismaPlugin from '@pothos/plugin-prisma'
 import { GraphQLError } from 'graphql'
@@ -39,7 +39,7 @@ export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
   AuthScopes: {
     public: boolean
-    userRequired: boolean
+    userRequired: UserRole
     newUser: boolean
   }
   Context: CustomContext

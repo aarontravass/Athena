@@ -20,3 +20,11 @@ export const generateAuthAndRefreshTokens = (user: User) => {
   const refreshToken = randomUUID() as string
   return { authToken, refreshToken }
 }
+
+export const streamToBase64 = async (stream: NodeJS.ReadableStream) => {
+  const chunks = []
+  for await (const chunk of stream) {
+    chunks.push(Buffer.from(chunk))
+  }
+  return Buffer.concat(chunks).toString('base64')
+}

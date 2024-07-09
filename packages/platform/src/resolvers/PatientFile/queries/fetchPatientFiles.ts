@@ -1,19 +1,18 @@
 import { UserRole } from '@medihacks/prisma'
 import { builder } from '../../../builder'
+import { PatientFile } from '../../../schema/PatientFile.schema'
 import { prisma } from '../../../prisma'
-import { User } from '../../../schema/User.schema'
 
-builder.queryField('fetchUser', (t) =>
+builder.queryField('fetchPatientFiles', (t) =>
   t.prismaField({
-    type: User,
+    type: [PatientFile],
     authScopes: {
       userRequired: UserRole.Patient
     },
-    nullable: true,
     resolve: (query, root, args, ctx) =>
-      prisma.user.findUnique({
+      prisma.patientFile.findMany({
         where: {
-          id: ctx.userId
+          userId: ctx.userId
         },
         ...query
       })
