@@ -1,8 +1,9 @@
 import { usePrivy } from '@privy-io/react-auth'
 
-function LogoutButton() {
+import React from 'react'
+
+const LogoutPage = () => {
   const { ready, authenticated, logout } = usePrivy()
-  // Disable logout when Privy is not ready or the user is not authenticated
   const disableLogout = !ready || (ready && !authenticated)
 
   return (
@@ -11,3 +12,5 @@ function LogoutButton() {
     </button>
   )
 }
+
+export default LogoutPage
