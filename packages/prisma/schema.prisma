@@ -22,15 +22,17 @@ enum UserRole {
 }
 
 model User {
-  id           String        @id @default(uuid())
+  id           String          @id @default(uuid())
   email        String
   name         String?
-  privyDid     String        @unique
+  privyDid     String          @unique
   role         UserRole
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
   authTokens   AuthToken[]
   patientFiles PatientFile[]
+  patients     PatientDoctor[] @relation("patient")
+  doctors      PatientDoctor[] @relation("doctor")
 }
 
 model AuthToken {
@@ -52,4 +54,16 @@ model PatientFile {
   user       User     @relation(fields: [userId], references: [id])
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+}
+
+model PatientDoctor {
+  id        Int      @id @default(autoincrement())
+  patientId String
+  doctorId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  patient   User     @relation(fields: [patientId], references: [id], name: "patient")
+  doctor    User     @relation(fields: [doctorId], references: [id], name: "doctor")
+
+  @@unique([patientId, doctorId])
 }

@@ -24,6 +24,7 @@
     "url": "https://github.com/aarontravass/medihacks2024/issues"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.47.0",
     "@medihacks/prisma": "workspace:^",
     "@pothos/core": "^3.41.2",
     "@pothos/plugin-prisma": "^3.65.3",
