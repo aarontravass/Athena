@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
 const defaultConfig = import('@commitlint/config-conventional')
 
 module.exports = {
