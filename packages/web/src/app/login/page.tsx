@@ -4,11 +4,11 @@ import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { gql, useMutation } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
-import { APP_NAME, PRIVY_APP_NAME } from './contants'
 import Image from 'next/image'
-import loginSideImage from '@/../public/loginSideImage.png'
-import mainLogo from '@/../public/mainLogo.png'
-import { useRouter } from 'next/router'
+import loginSideImage from '@/../public/images/login/loginSideImage.png'
+import mainLogo from '@/../public/images/login/mainLogo.png'
+import { APP_NAME, PRIVY_APP_NAME } from '@/constants/contants'
+import { useRouter } from 'next/navigation'
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
@@ -50,10 +50,11 @@ const LoginPage = (): JSX.Element => {
       const role = isPatient ? 'Patient' : 'Doctor'
       await registerUser({ variables: { role } })
         .then((result) => {
+          console.log({ result })
           localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
           localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
           setIsLoading(false)
-          router.push('/dashboard')
+          //   router.push('/dashboard')
         })
         .catch((error) => {
           setIsLoading(false)

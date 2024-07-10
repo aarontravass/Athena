@@ -1,5 +1,5 @@
+import { API_URL } from '@/constants/contants'
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
-import { API_URL } from './contants'
 
 const apiUrl = API_URL
 console.log({ API_URL })
