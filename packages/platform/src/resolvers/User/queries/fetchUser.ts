@@ -7,7 +7,7 @@ builder.queryField('fetchUser', (t) =>
   t.prismaField({
     type: User,
     authScopes: {
-      userRequired: UserRole.Patient
+      hasRole: UserRole.Patient
     },
     nullable: true,
     resolve: (query, root, args, ctx) =>

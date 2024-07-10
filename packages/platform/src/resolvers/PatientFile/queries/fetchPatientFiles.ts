@@ -7,7 +7,7 @@ builder.queryField('fetchPatientFiles', (t) =>
   t.prismaField({
     type: [PatientFile],
     authScopes: {
-      userRequired: UserRole.Patient
+      hasRole: UserRole.Patient
     },
     resolve: (query, root, args, ctx) =>
       prisma.patientFile.findMany({
