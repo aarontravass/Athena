@@ -7,7 +7,7 @@ import ErrorText from '@/components/typography/error-text'
 import Image from 'next/image'
 import loginSideImage from '@/../public/images/login/loginSideImage.png'
 import mainLogo from '@/../public/images/login/mainLogo.png'
-import { APP_NAME, PRIVY_APP_NAME } from '@/constants/contants'
+import { APP_NAME, PRIVY_APP_NAME } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
 
 const LoginPage = (): JSX.Element => {
@@ -48,13 +48,14 @@ const LoginPage = (): JSX.Element => {
   const handleRegister = async () => {
     try {
       const role = isPatient ? 'Patient' : 'Doctor'
+      const roleUrl = role.toLowerCase()
       await registerUser({ variables: { role } })
         .then((result) => {
           console.log({ result })
           localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
           localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
           setIsLoading(false)
-          //   router.push('/dashboard')
+          router.push('/' + roleUrl + '/dashboard')
         })
         .catch((error) => {
           setIsLoading(false)
