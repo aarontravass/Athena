@@ -138,6 +138,9 @@ importers:
       graphql:
         specifier: ^16.9.0
         version: 16.9.0
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.5
       next:
         specifier: 14.2.4
         version: 14.2.4(@babel/core@7.24.7)(babel-plugin-macros@3.1.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)

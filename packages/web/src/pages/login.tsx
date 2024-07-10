@@ -48,12 +48,13 @@ const LoginPage = (): JSX.Element => {
   const handleRegister = async () => {
     try {
       const role = isPatient ? 'Patient' : 'Doctor'
+      const roleUrl = role.toLowerCase()
       await registerUser({ variables: { role } })
         .then((result) => {
           localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
           localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
           setIsLoading(false)
-          router.push('/dashboard')
+          router.push('/' + roleUrl + '/dashboard')
         })
         .catch((error) => {
           setIsLoading(false)
