@@ -1,6 +1,5 @@
 import { APIResponse, UserProfile } from '@/helper/types'
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit'
-import axios from 'axios'
 
 export const getUserInfo = createAsyncThunk<UserProfile, void>('user/getUserInfo', async (thunkApi) => {
   // const response = await axios.get<APIResponse>("/workspace/home");
@@ -22,7 +21,7 @@ export const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getUserInfo.pending, (state) => {})
     builder.addCase(getUserInfo.fulfilled, (state, action) => {
-      console.log(action.payload)
+      console.log({ action })
       state.name = action.payload.name
       state.avatar = action.payload.avatar
     })

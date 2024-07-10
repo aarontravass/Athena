@@ -8,8 +8,8 @@ import auth from '@/lib/auth'
 interface AuthContextType {
   isAuthenticated: boolean
   isLoading: boolean
-  login: (token: string) => Promise<void>
-  logout: () => Promise<void>
+  authLogin: (token: string) => Promise<void>
+  authLogout: () => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth()
   }, [checkAuth])
 
-  const login = useCallback(
+  const authLogin = useCallback(
     async (token: string) => {
       await auth.saveToken(token)
       checkAuth()
@@ -38,13 +38,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [checkAuth]
   )
 
-  const logout = useCallback(async () => {
+  const authLogout = useCallback(async () => {
     await auth.logout()
     checkAuth()
     router.push('/login')
   }, [checkAuth, router])
 
-  return <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, authLogin, authLogout }}>
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {

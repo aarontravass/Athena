@@ -9,12 +9,14 @@ import loginSideImage from '@/../public/images/login/loginSideImage.png'
 import mainLogo from '@/../public/images/login/mainLogo.png'
 import { APP_NAME, PRIVY_APP_NAME } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/providers/auth'
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const { ready, authenticated, getAccessToken } = usePrivy()
+  const { authLogin } = useAuth()
 
   const REGISTER_PATIENT_USER = gql`
     mutation createAuthToken($role: UserRole!) {
@@ -50,10 +52,11 @@ const LoginPage = (): JSX.Element => {
       const role = isPatient ? 'Patient' : 'Doctor'
       const roleUrl = role.toLowerCase()
       await registerUser({ variables: { role } })
-        .then((result) => {
+        .then(async (result) => {
           console.log({ result })
           localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
           localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+          await authLogin(result?.data?.createAuthToken?.authToken)
           setIsLoading(false)
           router.push('/' + roleUrl + '/dashboard')
         })
@@ -97,7 +100,6 @@ const LoginPage = (): JSX.Element => {
   if (!ready || (ready && authenticated))
     return (
       <div className="flex items-center justify-center h-screen">
-        {/* <LoadingSpinner size="large" /> */}
         <span className="loading loading-spinner loading-lg"></span>
       </div>
     )

@@ -16,16 +16,16 @@ const submenuIconClasses = `h-5 w-5`
 
 const routes: SidebarMenuObj[] = [
   {
-    path: '/dashboard',
+    path: './dashboard',
     icon: <Squares2X2Icon className={iconClasses} />,
     pageName: 'Dashboard',
     pageTitle: 'Dashboard'
   },
   {
-    path: '/leads',
+    path: './documents',
     icon: <InboxArrowDownIcon className={iconClasses} />,
-    pageName: 'Leads',
-    pageTitle: 'Leads'
+    pageName: 'Documents',
+    pageTitle: 'Documents'
   },
   {
     path: '/settings',

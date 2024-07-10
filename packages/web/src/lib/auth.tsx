@@ -4,6 +4,7 @@ import Cookies from 'js-cookie'
 
 const auth = {
   saveToken: (token: string) => {
+    console.log({ token })
     Cookies.set('auth-token', token, {
       expires: 1, // 1 day
       secure: true,

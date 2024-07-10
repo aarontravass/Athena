@@ -3,6 +3,8 @@ import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import AddLeadModalBody from '../features/leads/components/add-lead-modal-body'
 import ConfirmationModalBody from './confirmation-modal-body'
 import { MODAL_BODY_TYPES } from '@/helper/constants'
+import FilePreviewer from 'react-file-previewer'
+import { useEffect } from 'react'
 
 function ModalLayout() {
   const { isOpen, bodyType, size, extraObject, title } = useAppSelector((state) => state.modal)
@@ -11,6 +13,9 @@ function ModalLayout() {
   const close = () => {
     dispatch(closeModal())
   }
+  useEffect(() => {
+    console.log('hellloooooo')
+  }, [bodyType])
 
   return (
     <>
@@ -29,7 +34,18 @@ function ModalLayout() {
             {
               [MODAL_BODY_TYPES.LEAD_ADD_NEW]: <AddLeadModalBody closeModal={close} extraObject={extraObject} />,
               [MODAL_BODY_TYPES.CONFIRMATION]: <ConfirmationModalBody extraObject={extraObject} closeModal={close} />,
-              [MODAL_BODY_TYPES.DEFAULT]: <div></div>
+              [MODAL_BODY_TYPES.DEFAULT]: (
+                <div>
+                  {/* <FilePreviewer
+                    file={{
+                      data: extraObject.,
+                      mimeType: 'application/pdf',
+                      name: 'sample.pdf' // for download
+                    }}
+                  /> */}
+                  <pre>{JSON.stringify(extraObject, null, 2)}</pre>
+                </div>
+              )
             }[bodyType]
           }
         </div>

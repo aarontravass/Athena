@@ -13,6 +13,8 @@ import auth from '@/lib/auth'
 import routes from '@/helper/sidebar-routes'
 import { setPageTitle } from '../features/common/headerSlice'
 import { getUserInfo } from '../features/common/userSlice'
+import mainLogo from '@/../public/images/login/mainLogo.png'
+import Image from 'next/image'
 
 interface LeftSidebarProps {}
 
@@ -74,7 +76,7 @@ function LeftSidebar(props: LeftSidebarProps) {
 
         <li className="mb-2 font-semibold text-xl">
           <Link href="/welcome">
-            <img className="mask mask-squircle w-10" src="/logo192.png" alt="DashWind Logo" />
+            <Image className="mask mask-squircle w-10" src={mainLogo} alt="DashWind Logo" />
             DashWind
           </Link>
         </li>
