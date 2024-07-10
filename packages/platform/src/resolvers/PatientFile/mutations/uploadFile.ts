@@ -13,7 +13,7 @@ builder.mutationField('uploadFile', (t) =>
       userId: t.arg.id({ validate: { uuid: true } })
     },
     authScopes: {
-      userRequired: UserRole.Doctor
+      hasRole: UserRole.Doctor
     },
     resolve: async (query, root, { file, userId }) => {
       const user = await prisma.user.findFirst({

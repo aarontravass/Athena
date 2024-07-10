@@ -39,8 +39,9 @@ export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes
   AuthScopes: {
     public: boolean
-    userRequired: UserRole
+    userRequired: boolean
     newUser: boolean
+    hasRole: UserRole
   }
   Context: CustomContext
   DefaultInputFieldRequiredness: true
@@ -55,7 +56,8 @@ export const builder = new SchemaBuilder<{
   authScopes: () => ({
     public: true,
     newUser: () => newUser(),
-    userRequired: () => userRequired()
+    userRequired: () => userRequired(),
+    hasRole: () => userRequired()
   }),
   validationOptions: {
     validationError: (zodError) => new GraphQLError(zodError.message)

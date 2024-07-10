@@ -6,7 +6,7 @@ import { GraphQLError } from 'graphql'
 builder.mutationField('addPatient', (t) =>
   t.boolean({
     authScopes: {
-      userRequired: UserRole.Doctor
+      hasRole: UserRole.Doctor
     },
     args: {
       patientId: t.arg.id({ validate: { uuid: true } })
