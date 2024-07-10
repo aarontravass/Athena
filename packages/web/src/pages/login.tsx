@@ -1,8 +1,8 @@
 'use client'
 import { useLogin, usePrivy } from '@privy-io/react-auth'
 import Head from 'next/head'
-import { useState } from 'react'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
+import { gql, useMutation } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import { APP_NAME, PRIVY_APP_NAME } from './contants'
 import Image from 'next/image'
@@ -14,9 +14,7 @@ const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>('')
-  const router = useRouter()
-
-  const { ready, getAccessToken } = usePrivy()
+  const { ready, authenticated, getAccessToken } = usePrivy()
 
   const REGISTER_PATIENT_USER = gql`
     mutation createAuthToken($role: UserRole!) {
@@ -26,11 +24,26 @@ const LoginPage = (): JSX.Element => {
       }
     }
   `
+  const router = useRouter()
   const disableLogin = !ready
-
   const [registerUser, { data, error }] = useMutation(REGISTER_PATIENT_USER, {
     context: { appTokenName: PRIVY_APP_NAME }
   })
+
+  const readyAndNoAuthentication = () => {
+    console.log({ ready, authenticated, isLoading })
+    if (ready) {
+      if (!authenticated) {
+        setIsLoading(false)
+        console.log('take')
+        console.log({ ready, authenticated, isLoading })
+      }
+    }
+  }
+  useEffect(() => {
+    console.log('hello world')
+    readyAndNoAuthentication()
+  }, [ready, authenticated])
 
   const handleRegister = async () => {
     try {
@@ -39,15 +52,17 @@ const LoginPage = (): JSX.Element => {
         .then((result) => {
           localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
           localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+          setIsLoading(false)
           router.push('/dashboard')
         })
         .catch((error) => {
+          setIsLoading(false)
           console.error({ error })
           setErrorMessage(error?.message)
         })
     } catch (e) {
-      console.error(e)
       setIsLoading(false)
+      console.error(e)
     }
   }
 
@@ -57,6 +72,7 @@ const LoginPage = (): JSX.Element => {
 
   const { login } = useLogin({
     onComplete: async (user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount) => {
+      console.log('hello worldsdsd')
       setIsLoading(true)
       console.log({ user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount })
       const accessToken = await getAccessToken()
@@ -76,7 +92,7 @@ const LoginPage = (): JSX.Element => {
     setIsLoading(true)
     login()
   }
-  if (!ready || !isLoading)
+  if (!ready || (ready && authenticated))
     return (
       <div className="flex items-center justify-center h-screen">
         {/* <LoadingSpinner size="large" /> */}
