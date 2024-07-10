@@ -26,3 +26,9 @@ export const fetchFileAsBase64 = async (patientFile: PatientFile) => {
   if (!data.Body) throw new GraphQLError('File not found')
   return streamToBase64(data.Body)
 }
+
+export const removeFile = async ({ patientFile }: { patientFile: PatientFile }) =>
+  client
+    .deleteObject({ Key: patientFile.userId, Bucket: patientFile.bucketName })
+    .then(() => true)
+    .catch(() => false)
