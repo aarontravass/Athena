@@ -10,7 +10,7 @@ builder.queryField('fetchPatientFileBlob', (t) =>
       fileId: t.arg.id({ validate: { uuid: true } })
     },
     authScopes: {
-      userRequired: UserRole.Patient
+      hasRole: UserRole.Patient
     },
     resolve: async (root, { fileId }, ctx) => {
       const patientFile = await prisma.patientFile.findFirst({
