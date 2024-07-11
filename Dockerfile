@@ -1,5 +1,7 @@
 FROM node:20-alpine as base
 
+LABEL org.opencontainers.image.source=https://github.com/aarontravass/medihacks2024
+
 RUN corepack enable
 
 ENV PNPM_HOME="/pnpm"
