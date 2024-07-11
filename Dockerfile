@@ -8,13 +8,18 @@ ENV PATH="$PNPM_HOME:$PATH"
 
 ENV NODE_ENV=production
 
-RUN apk install wget gpg coreutils
-
-RUN wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-
-RUN echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
-
-RUN apk update && apk add hcp
+RUN apk add --update --virtual .deps --no-cache gnupg && \
+    cd /tmp && \
+    wget https://releases.hashicorp.com/hcp/0.4.0/hcp_0.4.0_linux_amd64.zip && \
+    wget https://releases.hashicorp.com/hcp/0.4.0/hcp_0.4.0_SHA256SUMS && \
+    wget https://releases.hashicorp.com/hcp/0.4.0/hcp_0.4.0_SHA256SUMS.sig && \
+    wget -qO- https://www.hashicorp.com/.well-known/pgp-key.txt | gpg --import && \
+    gpg --verify hcp_0.4.0_SHA256SUMS.sig hcp_0.4.0_SHA256SUMS && \
+    grep hcp_0.4.0_linux_amd64.zip hcp_0.4.0_SHA256SUMS | sha256sum -c && \
+    unzip /tmp/hcp_0.4.0_linux_amd64.zip -d /tmp && \
+    mv /tmp/hcp /usr/local/bin/hcp && \
+    rm -f /tmp/hcp_0.4.0_linux_amd64.zip hcp_0.4.0_SHA256SUMS 0.4.0/hcp_0.4.0_SHA256SUMS.sig && \
+    apk del .deps
 
 WORKDIR /app
 
