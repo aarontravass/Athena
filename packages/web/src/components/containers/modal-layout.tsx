@@ -6,7 +6,7 @@ import { MODAL_BODY_TYPES } from '@/helper/constants'
 import { useEffect } from 'react'
 
 function ModalLayout() {
-  const { isOpen, bodyType, size, extraObject, title } = useAppSelector((state) => state.modal)
+  const { isOpen, bodyType, size, extraObject, title, bodyContent } = useAppSelector((state) => state.modal)
   const dispatch = useAppDispatch()
 
   const close = () => {
@@ -14,6 +14,7 @@ function ModalLayout() {
   }
   useEffect(() => {
     console.log('hellloooooo')
+    console.log({ isOpen, bodyType, size, extraObject, title, bodyContent })
   }, [bodyType])
 
   return (
@@ -29,38 +30,14 @@ function ModalLayout() {
           <h3 className="font-semibold text-2xl pb-6 text-center">{title}</h3>
 
           {/* Loading modal body according to different modal type */}
-          {
+          {/* {
             {
-              [MODAL_BODY_TYPES.LEAD_ADD_NEW]: <AddLeadModalBody closeModal={close} extraObject={extraObject} />,
-              [MODAL_BODY_TYPES.CONFIRMATION]: <ConfirmationModalBody extraObject={extraObject} closeModal={close} />,
-              [MODAL_BODY_TYPES.FILE_VIEWER]: (
-                <div>
-                  {/* {extraObject?.fileData && (
-                    <FilePreviewer
-                      file={{
-                        data: extraObject.fileData,
-                        // mimeType: 'application/pdf',
-                        name: 'sample.pdf' // for download
-                      }}
-                    />
-                  )} */}
-                </div>
-              ),
-              [MODAL_BODY_TYPES.UPLOAD_FILE]: (
-                <div>
-                  {/* {extraObject?.fileData && (
-                    <FilePreviewer
-                      file={{
-                        data: extraObject.fileData,
-                        // mimeType: 'application/pdf',
-                        name: 'sample.pdf' // for download
-                      }}
-                    />
-                  )} */}
-                </div>
-              )
+              // [MODAL_BODY_TYPES.LEAD_ADD_NEW]: <AddLeadModalBody closeModal={close} extraObject={extraObject} />,
+              // [MODAL_BODY_TYPES.CONFIRMATION]: <ConfirmationModalBody extraObject={extraObject} closeModal={close} />,
+              [MODAL_BODY_TYPES.DEFAULT]: <div>{extraObject.bodyContent}</div>
             }[bodyType]
-          }
+          } */}
+          <div>{bodyContent}</div>
         </div>
       </div>
     </>

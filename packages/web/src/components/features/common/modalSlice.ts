@@ -6,6 +6,7 @@ interface ModalState {
   bodyType: string
   size: string
   extraObject: Record<string, any>
+  bodyContent: JSX.Element | null
 }
 
 const initialState: ModalState = {
@@ -13,7 +14,8 @@ const initialState: ModalState = {
   isOpen: false,
   bodyType: '',
   size: '',
-  extraObject: {}
+  extraObject: {},
+  bodyContent: null
 }
 
 export const modalSlice = createSlice({
@@ -22,20 +24,28 @@ export const modalSlice = createSlice({
   reducers: {
     openModal: (
       state,
-      action: PayloadAction<{ title: string; bodyType: string; extraObject?: any; size?: string }>
+      action: PayloadAction<{
+        title: string
+        bodyType: string
+        extraObject?: any
+        size?: string
+        bodyContent: JSX.Element
+      }>
     ) => {
-      const { title, bodyType, extraObject, size } = action.payload
+      const { title, bodyType, extraObject, size, bodyContent } = action.payload
       state.isOpen = true
       state.bodyType = bodyType
       state.title = title
       state.size = size || 'md'
       state.extraObject = extraObject
+      state.bodyContent = bodyContent
     },
     closeModal: (state) => {
       state.isOpen = false
       state.bodyType = ''
       state.title = ''
       state.extraObject = {}
+      state.bodyContent = null
     }
   }
 })

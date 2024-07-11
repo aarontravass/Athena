@@ -16,11 +16,26 @@ interface DocumentsData {
   ipfsCid: string
   updatedAt: string
 }
+const TopSideButtons = () => {
+  const dispatch = useAppDispatch()
 
+  const uploadDocument = () => {
+    // dispatch(openModal({ title: 'Add New Lead', bodyType: MODAL_BODY_TYPES.LEAD_ADD_NEW }))
+  }
+
+  return (
+    <div className="inline-block float-right">
+      <button className="btn px-6 btn-sm normal-case btn-primary" onClick={uploadDocument}>
+        Upload
+      </button>
+    </div>
+  )
+}
 function Documents() {
   const dispatch = useAppDispatch()
   const [documentsData, setDocumentsData] = useState<DocumentsData[]>([])
   const [selectedFileId, setSelectedFileId] = useState<string>('')
+  //   const { leads } = useAppSelector((state) => state.leads)
 
   const FETCH_PATIENT_FILES = gql`
     query FetchPatientFiles {
@@ -74,15 +89,15 @@ function Documents() {
             bodyType: MODAL_BODY_TYPES.DEFAULT,
             bodyContent: (
               <>
-                {/* {patientFilesBlobData?.fetchPatientFileBlob && (
+                {patientFilesBlobData?.fetchPatientFileBlob && (
                   <FileViewer
                     file={{
-                      data: pdfData,
-                      mimeType: 'application/pdf',
+                      data: patientFilesBlobData?.fetchPatientFileBlob,
+                      // mimeType: 'application/pdf',
                       name: 'sample.pdf' // for download
                     }}
                   />
-                )} */}
+                )}
                 <button className="btn px-6 btn-sm normal-case btn-primary" onClick={modalButton}>
                   Hello World
                 </button>
@@ -106,7 +121,7 @@ function Documents() {
 
   return (
     <>
-      <TitleCard title="Medical Documents" topMargin="mt-2">
+      <TitleCard title="Medical Documents" topMargin="mt-2" TopSideButtons={<TopSideButtons />}>
         <div className="overflow-x-auto w-full">
           <table className="table w-full">
             <thead>
