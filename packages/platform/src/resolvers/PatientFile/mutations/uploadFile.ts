@@ -19,20 +19,38 @@ builder.mutationField('uploadFile', (t) =>
       const user = await prisma.user.findFirst({
         where: {
           id: userId
+        },
+        include: {
+          patientStorage: true
         }
       })
       if (!user) throw new GraphQLError('User not found')
       await createBucket(user.id)
       const cid = await uploadFile({ file, user })
       if (!cid) throw new GraphQLError('Could not upload file')
-      return prisma.patientFile.create({
-        data: {
-          userId,
-          ipfsCid: cid,
-          bucketName: userId,
-          fileName: file.name
-        }
-      })
+      return prisma.patientFile
+        .create({
+          data: {
+            userId,
+            ipfsCid: cid,
+            bucketName: userId,
+            fileName: file.name
+          }
+        })
+        .then(async (patientFile) => {
+          await prisma.patientStorage.update({
+            data: {
+              usedSpace: {
+                increment: file.size
+              }
+            },
+            where: {
+              patientId: userId
+            }
+          })
+
+          return patientFile
+        })
     }
   })
 )

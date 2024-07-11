@@ -1,7 +1,13 @@
 {
-  "name": "web",
+  "name": "@medihacks/web",
   "version": "0.1.0",
-  "private": true,
+  "author": "ashup99 <ashutoshpunyani99@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aarontravass/medihacks2024.git"
+  },
+  "homepage": "https://github.com/aarontravass/medihacks2024#readme",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

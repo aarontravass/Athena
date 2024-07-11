@@ -23,7 +23,7 @@ builder.mutationField('refreshAuthToken', (t) =>
       })
       if (!currentTokenRecord) throw new GraphQLError('Refresh Token or Auth Token are invalid')
       return prisma.authToken.update({
-        data: generateAuthAndRefreshTokens(currentTokenRecord.user),
+        data: await generateAuthAndRefreshTokens(currentTokenRecord.user),
         where: {
           id: currentTokenRecord.id
         }

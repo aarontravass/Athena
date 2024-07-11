@@ -13,6 +13,9 @@ import './resolvers/PatientFile/mutations/uploadFile'
 import './resolvers/PatientFile/queries/fetchPatientFileBlob'
 import './resolvers/PatientFile/queries/fetchPatientFiles'
 
+// PatientStorage
+import './resolvers/PatientStorage/queries/fetchPatientStorage'
+
 import { builder } from './builder'
 
 export const schema = builder.toSchema()

@@ -15,3 +15,13 @@ export const streamToBase64 = async (stream: NodeJS.ReadableStream) => {
   }
   return Buffer.concat(chunks).toString('base64')
 }
+
+export const formatFileSize = (storageSpaceInBytes: number) => {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  let unitsIndex = 0
+  while (storageSpaceInBytes >= 1000.0) {
+    storageSpaceInBytes /= 1000.0
+    unitsIndex++
+  }
+  return storageSpaceInBytes.toFixed(2) + units[unitsIndex]
+}

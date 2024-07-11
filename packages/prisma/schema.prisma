@@ -22,17 +22,18 @@ enum UserRole {
 }
 
 model User {
-  id           String          @id @default(uuid())
-  email        String
-  name         String?
-  privyDid     String          @unique
-  role         UserRole
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
-  authTokens   AuthToken[]
-  patientFiles PatientFile[]
-  patients     PatientDoctor[] @relation("patient")
-  doctors      PatientDoctor[] @relation("doctor")
+  id             String          @id @default(uuid())
+  email          String
+  name           String?
+  privyDid       String          @unique
+  role           UserRole
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  authTokens     AuthToken[]
+  patientFiles   PatientFile[]
+  patients       PatientDoctor[] @relation("patient")
+  doctors        PatientDoctor[] @relation("doctor")
+  patientStorage PatientStorage?
 }
 
 model AuthToken {
@@ -67,3 +68,15 @@ model PatientDoctor {
 
   @@unique([patientId, doctorId])
 }
+
+model PatientStorage {
+  id        Int      @id @default(autoincrement())
+  patientId String   @unique
+  patient   User     @relation(fields: [patientId], references: [id])
+  maxSpace  Float
+  usedSpace Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
