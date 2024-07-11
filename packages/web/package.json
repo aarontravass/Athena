@@ -1,26 +1,39 @@
 {
   "name": "web",
-  "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "aarontravass <aaron.travass@hotmail.com>",
-  "homepage": "https://github.com/aarontravass/medihacks2024#readme",
-  "license": "ISC",
-  "main": "lib/web.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/aarontravass/medihacks2024.git"
-  },
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "node ./__tests__/web.test.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
-  "bugs": {
-    "url": "https://github.com/aarontravass/medihacks2024/issues"
+  "dependencies": {
+    "@apollo/client": "^3.10.8",
+    "@heroicons/react": "^2.1.4",
+    "@privy-io/react-auth": "^1.73.2",
+    "@reduxjs/toolkit": "^2.2.6",
+    "@tailwindcss/typography": "^0.5.13",
+    "graphql": "^16.9.0",
+    "next": "14.2.4",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-file-previewer": "^0.6.3",
+    "react-redux": "^9.1.2",
+    "react-toastify": "^10.0.5",
+    "theme-change": "^2.5.0"
+  },
+  "devDependencies": {
+    "@types/js-cookie": "^3.0.6",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.4.19",
+    "daisyui": "^4.12.10",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.4",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }

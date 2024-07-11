@@ -18,8 +18,8 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "format": "prettier --check \"./**/*.{ts,js}\"",
-    "format:fix": "prettier --write \"./**/*.{ts,js}\"",
+    "format": "prettier --check \"./**/*.{ts,js,tsx}\"",
+    "format:fix": "prettier --write \"./**/*.{ts,js,tsx}\"",
     "prepare": "husky"
   }
 }
