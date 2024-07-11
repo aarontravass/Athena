@@ -138,7 +138,7 @@ const LoginPage = (): JSX.Element => {
                       <>
                         <p className="py-2 mt-4">
                           ✓ <span className="font-semibold">Decentrailized</span> storage medical records for all your
-                          patinets
+                          patients
                         </p>
                       </>
                     )}

@@ -21,13 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StoreProvider>
-          <AuthProvider>
-            <ApolloProviderWrapper>
-              <PrivyProviderWrapper>{children}</PrivyProviderWrapper>
-            </ApolloProviderWrapper>
-          </AuthProvider>
-        </StoreProvider>
+        <PrivyProviderWrapper>
+          <StoreProvider>
+            <AuthProvider>
+              <ApolloProviderWrapper>{children}</ApolloProviderWrapper>
+            </AuthProvider>
+          </StoreProvider>
+        </PrivyProviderWrapper>
       </body>
     </html>
   )

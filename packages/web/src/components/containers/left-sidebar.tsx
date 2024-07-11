@@ -15,12 +15,14 @@ import { setPageTitle } from '../features/common/headerSlice'
 import { getUserInfo } from '../features/common/userSlice'
 import mainLogo from '@/../public/images/login/mainLogo.png'
 import Image from 'next/image'
+import { useAuth } from '@/providers/auth'
 
 interface LeftSidebarProps {}
 
 function LeftSidebar(props: LeftSidebarProps) {
   const pathname = usePathname()
   const dispatch = useAppDispatch()
+  const { authLogout } = useAuth()
 
   const close = () => {
     const leftSidebarDrawer = document.getElementById('left-sidebar-drawer')
@@ -59,8 +61,7 @@ function LeftSidebar(props: LeftSidebarProps) {
 
   const logoutUser = async () => {
     console.log('here')
-    await auth.logout()
-    window.location.href = '/'
+    await authLogout()
   }
 
   return (

@@ -7,7 +7,6 @@ import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
-import FileViewer from 'react-file-viewer'
 
 interface DocumentsData {
   createdAt: string

@@ -20,7 +20,30 @@ const PatientDashboard = () => {
 
   if (ready && authenticated) {
     // Replace this code with however you'd like to handle an authenticated user
-    return <p>User {user?.email?.address} is logged in.</p>
+    return (
+      <>
+        <div className="form-control w-full mt-4">
+          <label className="label">
+            <p>Select a patient to add to your list</p>
+          </label>
+          <select className="select select-bordered w-full max-w-md">
+            <option disabled selected>
+              Select an email address
+            </option>
+            <option>Han Solo</option>
+            <option>Greedo</option>
+          </select>
+          <input
+            // type={type || 'text'}
+            // value={value}
+            // placeholder={placeholder || ''}
+            // onChange={(e) => updateInputValue(e.target.value)}
+            className="input input-bordered w-full"
+          />
+        </div>
+        <p>User {user?.email?.address} is logged in.</p>)
+      </>
+    )
   }
 }
 
