@@ -26,7 +26,8 @@ builder.queryField('fetchPatientStorage', (t) =>
       return prisma.patientStorage.findFirst({
         where: {
           patientId
-        }
+        },
+        ...query
       })
     }
   })
