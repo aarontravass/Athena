@@ -5,7 +5,7 @@ import InputText from '@/components/input/input-text'
 import TextArea from '@/components/input/text-area'
 import ErrorText from '@/components/typography/error-text'
 import { Lead } from '@/helper/types'
-import { addNewLead } from '../leadSlice'
+// import { addNewLead } from '../leadSlice'
 
 interface Props {
   closeModal: () => void
@@ -38,7 +38,7 @@ function AddLeadModalBody({ closeModal }: Props) {
         description: leadObj.description,
         avatar: 'https://reqres.in/img/faces/1-image.jpg'
       }
-      dispatch(addNewLead({ newLeadObj }))
+      // dispatch(addNewLead({ newLeadObj }))
       dispatch(showNotification({ message: 'New Lead Added!', status: 1 }))
       closeModal()
     }
