@@ -34,7 +34,20 @@ function ModalLayout() {
             {
               [MODAL_BODY_TYPES.LEAD_ADD_NEW]: <AddLeadModalBody closeModal={close} extraObject={extraObject} />,
               [MODAL_BODY_TYPES.CONFIRMATION]: <ConfirmationModalBody extraObject={extraObject} closeModal={close} />,
-              [MODAL_BODY_TYPES.DEFAULT]: (
+              [MODAL_BODY_TYPES.FILE_VIEWER]: (
+                <div>
+                  {extraObject?.fileData && (
+                    <FilePreviewer
+                      file={{
+                        data: extraObject.fileData,
+                        // mimeType: 'application/pdf',
+                        name: 'sample.pdf' // for download
+                      }}
+                    />
+                  )}
+                </div>
+              ),
+              [MODAL_BODY_TYPES.UPLOAD_FILE]: (
                 <div>
                   {extraObject?.fileData && (
                     <FilePreviewer
