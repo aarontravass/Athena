@@ -6,6 +6,7 @@ import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
 import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
+import ErrorText from '@/components/typography/error-text'
 
 interface DocumentsData {
   createdAt: string
@@ -32,6 +33,7 @@ const TopSideButtons = () => {
 function Documents() {
   const dispatch = useAppDispatch()
   const [documentsData, setDocumentsData] = useState<DocumentsData[]>([])
+  const [selectedFileId, setSelectedFileId] = useState<string>('')
   //   const { leads } = useAppSelector((state) => state.leads)
 
   const FETCH_PATIENT_FILES = gql`
@@ -46,40 +48,54 @@ function Documents() {
     }
   `
 
-  const { data, error } = useQuery(FETCH_PATIENT_FILES, {
+  const FETCH_PATIENT_FILE_BLOB = gql`
+    query FetchPatientFileBlob($fileId: ID!) {
+      fetchPatientFileBlob(fileId: $fileId)
+    }
+  `
+
+  const { data: patientFilesData, error: patientFilesError } = useQuery(FETCH_PATIENT_FILES, {
     context: { appTokenName: APP_NAME }
+  })
+
+  const { data: patientFilesBlobData, error: patientFilesBlobError } = useQuery(FETCH_PATIENT_FILE_BLOB, {
+    variables: { fileId: selectedFileId },
+    context: { appTokenName: APP_NAME },
+    skip: !selectedFileId
   })
 
   useEffect(() => {
     dispatch(() => {
-      const docsData = data?.fetchPatientFiles
+      const docsData = patientFilesData?.fetchPatientFiles
       if (docsData) {
         console.log({ docsData })
-
         setDocumentsData(docsData)
       }
     })
-  }, [data, dispatch])
+  }, [patientFilesData])
 
-  const getDummyStatus = (index: number) => {
-    if (index % 5 === 0) return <div className="badge">Not Interested</div>
-    else if (index % 5 === 1) return <div className="badge badge-primary">In Progress</div>
-    else if (index % 5 === 2) return <div className="badge badge-secondary">Sold</div>
-    else if (index % 5 === 3) return <div className="badge badge-accent">Need Followup</div>
-    else return <div className="badge badge-ghost">Open</div>
-  }
+  useEffect(() => {
+    dispatch(() => {
+      console.log({ patientFilesBlobData })
+      if (patientFilesBlobData) {
+        dispatch(
+          openModal({
+            title: 'Confirmation',
+            bodyType: MODAL_BODY_TYPES.DEFAULT,
+            extraObject: {
+              fileData: patientFilesBlobData?.fetchPatientFileBlob
+            }
+          })
+        )
+      }
+    })
+  }, [patientFilesBlobData])
 
   const openCurrentDocument = (index: number) => {
-    dispatch(
-      openModal({
-        title: 'Confirmation',
-        bodyType: MODAL_BODY_TYPES.DEFAULT,
-        extraObject: {
-          ...documentsData[index]
-        }
-      })
-    )
     console.log(documentsData[index])
+    console.log(documentsData[index].id)
+    setSelectedFileId(documentsData[index].id)
+    console.log({ selectedFileId })
   }
 
   return (
@@ -112,6 +128,8 @@ function Documents() {
           </table>
         </div>
       </TitleCard>
+      {patientFilesError?.message && <ErrorText styleClass="mt-8">{patientFilesError.message}</ErrorText>}
+      {patientFilesBlobError?.message && <ErrorText styleClass="mt-8">{patientFilesBlobError.message}</ErrorText>}
     </>
   )
 }

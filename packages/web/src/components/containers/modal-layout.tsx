@@ -36,14 +36,15 @@ function ModalLayout() {
               [MODAL_BODY_TYPES.CONFIRMATION]: <ConfirmationModalBody extraObject={extraObject} closeModal={close} />,
               [MODAL_BODY_TYPES.DEFAULT]: (
                 <div>
-                  {/* <FilePreviewer
-                    file={{
-                      data: extraObject.,
-                      mimeType: 'application/pdf',
-                      name: 'sample.pdf' // for download
-                    }}
-                  /> */}
-                  <pre>{JSON.stringify(extraObject, null, 2)}</pre>
+                  {extraObject?.fileData && (
+                    <FilePreviewer
+                      file={{
+                        data: extraObject.fileData,
+                        // mimeType: 'application/pdf',
+                        name: 'sample.pdf' // for download
+                      }}
+                    />
+                  )}
                 </div>
               )
             }[bodyType]
