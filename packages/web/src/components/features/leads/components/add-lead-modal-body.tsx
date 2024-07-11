@@ -5,6 +5,7 @@ import InputText from '@/components/input/input-text'
 import TextArea from '@/components/input/text-area'
 import ErrorText from '@/components/typography/error-text'
 import { Lead } from '@/helper/types'
+// import { addNewLead } from '../leadSlice'
 
 interface Props {
   closeModal: () => void
