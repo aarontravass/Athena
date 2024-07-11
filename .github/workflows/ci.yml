@@ -52,4 +52,4 @@ jobs:
         run: docker push ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}}
 
       - name: Notify Render
-        run: curl ${{secrets.RENDER_DEPLOY_HOOK_URL}}&imgURL=ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}}
+        run: curl -G --data-urlencode "imgURL=ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}}"  ${{secrets.RENDER_DEPLOY_HOOK_URL}}
