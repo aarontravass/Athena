@@ -1,4 +1,5 @@
 import { builder } from '../builder'
+import { FileShareToken } from './FileShareToken.schema'
 
 export const PatientFile = builder.prismaObject('PatientFile', {
   fields: (t) => ({
@@ -7,6 +8,7 @@ export const PatientFile = builder.prismaObject('PatientFile', {
     fileName: t.exposeString('fileName'),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
     updatedAt: t.expose('updatedAt', { type: 'DateTime' }),
-    user: t.relation('user')
+    user: t.relation('user'),
+    fileShareTokens: t.relation('fileShareTokens', { type: FileShareToken })
   })
 })

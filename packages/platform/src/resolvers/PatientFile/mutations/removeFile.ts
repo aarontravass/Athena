@@ -2,7 +2,7 @@ import { UserRole } from '@medihacks/prisma'
 import { builder } from '../../../builder'
 import { prisma } from '../../../prisma'
 import { GraphQLError } from 'graphql'
-import { removeFile } from '../../../filebase'
+import { headObject, removeFile } from '../../../filebase'
 
 builder.mutationField('removeFile', (t) =>
   t.boolean({
@@ -26,15 +26,29 @@ builder.mutationField('removeFile', (t) =>
         }
       })
       if (!patient) throw new GraphQLError('This patient is not part of your group')
+      const objectHeaders = await headObject({ ...patientFile })
 
-      if (await removeFile({ patientFile })) {
+      if (objectHeaders && (await removeFile({ patientFile }))) {
         return prisma.patientFile
           .delete({
             where: {
               id: fileId
             }
           })
-          .then(() => true)
+          .then(async () => {
+            await prisma.patientStorage.update({
+              data: {
+                usedSpace: {
+                  decrement: objectHeaders.ContentLength ?? 0
+                }
+              },
+              where: {
+                patientId: patientFile.userId
+              }
+            })
+
+            return true
+          })
           .catch(() => false)
       }
 
