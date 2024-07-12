@@ -10,11 +10,6 @@ const fastify = Fastify({
 })
 fastify.register(FastifyMultipart)
 
-// Declare a route
-fastify.get('/', (req, res) => {
-  return res.status(200)
-})
-
 fastify.post('/upload', async (req, res) => {
   const token = (req.query as Record<string, string>).token
   const record = await isTokenValid(token)
@@ -22,15 +17,25 @@ fastify.post('/upload', async (req, res) => {
   const file = await req.file()
 
   if (!file) return res.status(400).send({ message: 'File not uploaded. Please try again.', success: false })
-
-  const cid = await uploadFile({ file, user: record.user })
-  if (!cid) return res.status(500).send({ message: 'Could not upload file', success: false })
+  file.filename = encodeURI(file.filename)
+  const outHeaders = await uploadFile({ file, user: record.user })
+  if (!outHeaders?.Metadata?.['cid']) return res.status(500).send({ message: 'Could not upload file', success: false })
   await prisma.patientFile.create({
     data: {
-      ipfsCid: cid,
+      ipfsCid: outHeaders.Metadata['cid'],
       userId: record.userId,
       fileName: file.filename,
       bucketName: record.userId
+    }
+  })
+  await prisma.patientStorage.update({
+    data: {
+      usedSpace: {
+        increment: outHeaders.ContentLength
+      }
+    },
+    where: {
+      patientId: record.userId
     }
   })
   await prisma.preSignedUrl.delete({
@@ -41,7 +46,6 @@ fastify.post('/upload', async (req, res) => {
   return res.status(200).send({ success: true })
 })
 
-// Run the server!
 fastify.listen({ port: PORT }, (err) => {
   if (err) throw err
   console.log(`server listening on ${PORT}`)
