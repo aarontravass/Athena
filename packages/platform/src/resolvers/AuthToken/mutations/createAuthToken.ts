@@ -34,8 +34,15 @@ builder.mutationField('createAuthToken', (t) =>
           }
         })
         await createBucket(user.id)
+        await prisma.patientStorage.create({
+          data: {
+            patientId: user.id,
+            maxSpace: 500 * 1000 * 1000, // 500 MB
+            usedSpace: 0
+          }
+        })
       }
-      const { authToken, refreshToken } = generateAuthAndRefreshTokens(user)
+      const { authToken, refreshToken } = await generateAuthAndRefreshTokens(user)
 
       return prisma.authToken.create({
         data: {

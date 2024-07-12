@@ -21,5 +21,6 @@
     "format": "prettier --check \"./**/*.{ts,js,tsx}\"",
     "format:fix": "prettier --write \"./**/*.{ts,js,tsx}\"",
     "prepare": "husky"
-  }
+  },
+  "packageManager": "pnpm@8.15.4"
 }

@@ -17,7 +17,7 @@ export const createBucket = (bucketName: string) => client.createBucket({ Bucket
 
 export const uploadFile = async ({ file, user }: { file: File; user: User }) => {
   await client.putObject({ Body: await file.text(), Key: file.name, Bucket: user.id })
-  const out = await client.headObject({ Bucket: user.id, Key: file.name })
+  const out = await headObject({ fileName: file.name, bucketName: user.id })
   return out.Metadata?.['cid']
 }
 
@@ -32,3 +32,6 @@ export const removeFile = async ({ patientFile }: { patientFile: PatientFile }) 
     .deleteObject({ Key: patientFile.userId, Bucket: patientFile.bucketName })
     .then(() => true)
     .catch(() => false)
+
+export const headObject = ({ bucketName, fileName }: { bucketName: string; fileName: string }) =>
+  client.headObject({ Key: fileName, Bucket: bucketName }).catch(() => null)
