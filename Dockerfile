@@ -39,9 +39,19 @@ WORKDIR /app/packages/prisma
 
 RUN pnpm generate
 
-FROM base as api
+FROM base as platform
 
 WORKDIR /app/packages/platform
+
+RUN pnpm build
+
+EXPOSE 3000
+
+CMD [ "pnpm", "start" ]
+
+FROM base as upload
+
+WORKDIR /app/packages/upload
 
 RUN pnpm build
 
