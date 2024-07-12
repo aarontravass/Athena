@@ -48,27 +48,22 @@ const LoginPage = (): JSX.Element => {
   }, [ready, authenticated])
 
   const handleRegister = async () => {
-    try {
-      const role = isPatient ? 'Patient' : 'Doctor'
-      const roleUrl = role.toLowerCase()
-      await registerUser({ variables: { role } })
-        .then(async (result) => {
-          console.log({ result })
-          localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
-          localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
-          await authLogin(result?.data?.createAuthToken?.authToken)
-          setIsLoading(false)
-          router.push('/' + roleUrl + '/dashboard')
-        })
-        .catch((error) => {
-          setIsLoading(false)
-          console.error({ error })
-          setErrorMessage(error?.message)
-        })
-    } catch (e) {
-      setIsLoading(false)
-      console.error(e)
-    }
+    const role = isPatient ? 'Patient' : 'Doctor'
+    const roleUrl = role.toLowerCase()
+    await registerUser({ variables: { role } })
+      .then(async (result) => {
+        console.log({ result })
+        localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
+        localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+        await authLogin(result?.data?.createAuthToken?.authToken)
+        setIsLoading(false)
+        router.push('/' + roleUrl + '/dashboard')
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        console.error({ error })
+        setErrorMessage(error?.message)
+      })
   }
 
   const changeRole = () => {

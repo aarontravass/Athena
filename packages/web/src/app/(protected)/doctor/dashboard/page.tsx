@@ -1,50 +1,108 @@
 'use client'
-import { usePrivy } from '@privy-io/react-auth'
-import { useRouter } from 'next/navigation'
+import ErrorText from '@/components/typography/error-text'
+import SuccessText from '@/components/typography/success-text'
+import { APP_NAME } from '@/helper/constants'
+import { PatientsListData } from '@/lib/models'
+import { gql, useMutation, useQuery } from '@apollo/client'
+import { useEffect, useState } from 'react'
 
 const PatientDashboard = () => {
-  const { ready, authenticated, user } = usePrivy()
-  console.log(user)
-  const router = useRouter()
+  const [patientsList, setPatientsList] = useState<PatientsListData[]>([])
+  const [selectedPatientId, setSelectedPatientId] = useState<string>('')
+  const [successMessage, setSuccessMessage] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
 
-  if (!ready) {
-    // Do nothing while the PrivyProvider initializes with updated user state
-    return <></>
+  const FETCH_ALL_PATIENTS = gql`
+    query FetchAllPatients {
+      fetchAllPatients {
+        createdAt
+        email
+        id
+        name
+        updatedAt
+      }
+    }
+  `
+
+  const ADD_PATIENT = gql`
+    mutation AddPatient($patientId: ID!) {
+      addPatient(patientId: $patientId)
+    }
+  `
+
+  const [addPatient, { data: addPatientData, loading: addPatientLoading, error: addPatientError }] = useMutation(
+    ADD_PATIENT,
+    {
+      context: { appTokenName: APP_NAME }
+    }
+  )
+
+  const onAddingThePatient = async () => {
+    setSuccessMessage('')
+    setErrorMessage('')
+    await addPatient({ variables: { patientId: selectedPatientId } })
+      .then(async (result) => {
+        console.log({ result })
+        setSuccessMessage('Patient Added successfully!')
+      })
+      .catch((error) => {
+        console.error({ error })
+        setErrorMessage(error?.message)
+      })
   }
 
-  if (ready && !authenticated) {
-    // Replace this code with however you'd like to handle an unauthenticated user
-    // As an example, you might redirect them to a login page
-    router.push('/login')
+  const onPatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log(event.target.value)
+    setSelectedPatientId(event.target.value)
   }
 
-  if (ready && authenticated) {
-    // Replace this code with however you'd like to handle an authenticated user
-    return (
-      <>
-        <div className="form-control w-full mt-4">
-          <label className="label">
-            <p>Select a patient to add to your list</p>
-          </label>
-          <select className="select select-bordered w-full max-w-md">
-            <option disabled selected>
+  const { data: patientsListData, error: patientsListDataError } = useQuery(FETCH_ALL_PATIENTS, {
+    context: { appTokenName: APP_NAME }
+  })
+
+  useEffect(() => {
+    const docsData = patientsListData?.fetchAllPatients
+    if (docsData) {
+      console.log({ docsData })
+      setPatientsList(docsData)
+    }
+  }, [patientsListData])
+
+  return (
+    <>
+      <div className="form-control w-full mt-4">
+        <label className="label">
+          <p>Select a patient to add to your list</p>
+        </label>
+        {patientsList.length > 0 && (
+          <select onChange={onPatientChange} defaultValue="" className="select select-bordered w-full max-w-md">
+            <option disabled value="">
               Select an email address
             </option>
-            <option>Han Solo</option>
-            <option>Greedo</option>
+            {patientsList.map((pat: PatientsListData, k: number) => (
+              <option key={k} value={pat.id}>
+                {pat.email}
+              </option>
+            ))}
           </select>
-          <input
-            // type={type || 'text'}
-            // value={value}
-            // placeholder={placeholder || ''}
-            // onChange={(e) => updateInputValue(e.target.value)}
-            className="input input-bordered w-full"
-          />
+        )}
+      </div>
+
+      {selectedPatientId && (
+        <div className="grid">
+          <button
+            disabled={addPatientLoading}
+            className="btn px-6 btn-sm normal-case btn-primary max-w-md mt-4"
+            onClick={onAddingThePatient}
+          >
+            Add patient to the doctor
+          </button>
         </div>
-        <p>User {user?.email?.address} is logged in.</p>)
-      </>
-    )
-  }
+      )}
+      {errorMessage && <ErrorText>{errorMessage}</ErrorText>}
+      {successMessage && <SuccessText>{successMessage}</SuccessText>}
+    </>
+  )
 }
 
 export default PatientDashboard

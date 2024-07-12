@@ -106,32 +106,35 @@ function Documents() {
   return (
     <>
       <TitleCard title="Medical Documents" topMargin="mt-2">
-        <div className="overflow-x-auto w-full">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>File Name</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {documentsData.map((doc: DocumentsData, k: number) => (
-                <tr key={k}>
-                  <td>{doc.fileName}</td>
-                  <td>{doc.createdAt}</td>
-                  <td>{doc.updatedAt}</td>
-                  <td>
-                    <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                      <EyeIcon className="w-5" />
-                    </button>
-                  </td>
+        {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
+        {documentsData?.length > 0 && (
+          <div className="overflow-x-auto w-full">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Created At</th>
+                  <th>Updated At</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {documentsData.map((doc: DocumentsData, k: number) => (
+                  <tr key={k}>
+                    <td>{doc.fileName}</td>
+                    <td>{doc.createdAt}</td>
+                    <td>{doc.updatedAt}</td>
+                    <td>
+                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
+                        <EyeIcon className="w-5" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </TitleCard>
       {patientFilesError?.message && <ErrorText styleClass="mt-8">{patientFilesError.message}</ErrorText>}
       {patientFilesBlobError?.message && <ErrorText styleClass="mt-8">{patientFilesBlobError.message}</ErrorText>}
