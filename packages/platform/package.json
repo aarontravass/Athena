@@ -17,8 +17,8 @@
   "scripts": {
     "build": "esbuild src/server.ts --bundle --platform=node --target=node20 --format=esm --packages=external --outdir=dist",
     "build:dev": "tsc",
-    "dev": "hcp vault-secrets run -- tsx watch src/server.ts",
-    "start": "hcp vault-secrets run -- node ./dist/server.js"
+    "dev": "hcp vault-secrets run --app=medihacks -- tsx watch src/server.ts",
+    "start": "hcp vault-secrets run --app=medihacks -- node ./dist/server.js"
   },
   "bugs": {
     "url": "https://github.com/aarontravass/medihacks2024/issues"
