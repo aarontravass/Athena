@@ -1,15 +1,14 @@
 {
-  "name": "@medihacks/platform",
+  "name": "@medihacks/upload",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "aarontravass <aaron.travass@hotmail.com>",
   "homepage": "https://github.com/aarontravass/medihacks2024#readme",
   "license": "MIT",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "type": "module",
+  "main": "src/server.ts",
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aarontravass/medihacks2024.git"
@@ -25,24 +24,11 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.47.0",
+    "@fastify/multipart": "^8.3.0",
     "@medihacks/prisma": "workspace:^",
-    "@pothos/core": "^3.41.2",
-    "@pothos/plugin-prisma": "^3.65.3",
-    "@pothos/plugin-scope-auth": "^3.22.1",
-    "@pothos/plugin-validation": "^3.10.2",
-    "@privy-io/server-auth": "^1.9.0",
-    "@ucans/core": "^0.12.0",
-    "@ucans/default-plugins": "^0.12.0",
-    "@ucans/ucans": "^0.12.0",
-    "dotenv": "^16.4.5",
-    "graphql": "^16.9.0",
-    "graphql-scalars": "^1.23.0",
-    "graphql-yoga": "^5.6.0",
-    "jsonwebtoken": "^9.0.2",
-    "zod": "^3.23.8"
+    "fastify": "^4.28.1"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.6",
-    "typescript": "^5.5.3"
+    "@types/node": "^20.14.10"
   }
 }
