@@ -1,17 +1,23 @@
 import * as ucans from '@ucans/ucans'
-import { ORG_DID } from './constants'
+import { ED_SECRET_KEY, ORG_DID } from './constants'
 import { User, UserRole } from '@medihacks/prisma'
 import { prisma } from './prisma'
+import { CustomContext } from './builder'
+
+const keypair = ucans.EdKeypair.fromSecretKey(ED_SECRET_KEY!)
 
 export const generateUCAN = async (user: User) => {
-  const keypair = await ucans.EdKeypair.create()
   const ucan = await ucans.build({
-    audience: ORG_DID,
+    audience: ORG_DID!,
     issuer: keypair,
     capabilities: [
       {
-        with: { scheme: 'fs', hierPart: `//${user.id}` },
-        can: { namespace: 'filebase', segments: ['OPEN', 'LIST'] }
+        with: { scheme: 'fs', hierPart: `//filebase` },
+        can: { namespace: 'filebase', segments: ['OPEN'] }
+      },
+      {
+        with: { scheme: 'fs', hierPart: `//filebase` },
+        can: { namespace: 'filebase', segments: ['LIST'] }
       }
     ],
     expiration: new Date().setHours(new Date().getHours() + 1), // 1 hr
@@ -20,16 +26,16 @@ export const generateUCAN = async (user: User) => {
         userId: user.id,
         role: user.role,
         privyDid: user.privyDid
-      }
+      } as Partial<CustomContext>
     ]
   })
 
   return ucans.encode(ucan)
 }
 
-export const verifyUCAN = async (token: string) => {
+export const verifyUCAN = async ({ token, capability }: { token: string; capability: ucans.capability.Capability }) => {
   const result = await ucans.verify(token, {
-    audience: ORG_DID,
+    audience: ORG_DID!,
     isRevoked: (ucan) =>
       prisma.authToken
         .findUniqueOrThrow({
@@ -46,13 +52,12 @@ export const verifyUCAN = async (token: string) => {
         .catch(() => true),
     requiredCapabilities: [
       {
-        capability: {
-          with: { scheme: 'mailto', hierPart: 'boris@fission.codes' },
-          can: { namespace: 'msg', segments: ['SEND'] }
-        },
-        rootIssuer: ORG_DID
+        capability,
+        rootIssuer: keypair.did()
       }
     ]
   })
   return result.ok
 }
+
+export const parseUCAN = (token: string) => ucans.parse(token)
