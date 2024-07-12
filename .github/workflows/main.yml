@@ -13,7 +13,7 @@ jobs:
     name: check_adminA
     runs-on: ubuntu-latest
     env:
-      NAME_ADMIN: aarontravass
+      NAME_ADMIN: ashutoshspunyani99-tamu
     steps:
       - name: st1
         if: ${{ github.actor != env.NAME_ADMIN }}
