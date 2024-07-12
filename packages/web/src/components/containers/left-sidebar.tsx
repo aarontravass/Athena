@@ -44,13 +44,13 @@ function LeftSidebar(props: LeftSidebarProps) {
         let submenuRouteObj = routes.filter((r) => {
           return r.path == substringBeforeSecondSlash
         })[0]
-        if (submenuRouteObj.submenu) {
-          let submenuObj = submenuRouteObj.submenu.filter((r) => {
-            return r.path == pathname
-          })[0]
-          console.log('herere', submenuObj)
-          dispatch(setPageTitle({ title: submenuObj.pageTitle }))
-        }
+        // if (submenuRouteObj.submenu) {
+        //   let submenuObj = submenuRouteObj.submenu.filter((r) => {
+        //     return r.path == pathname
+        //   })[0]
+        //   console.log('herere', submenuObj)
+        //   dispatch(setPageTitle({ title: submenuObj.pageTitle }))
+        // }
       }
     }
   }, [pathname])

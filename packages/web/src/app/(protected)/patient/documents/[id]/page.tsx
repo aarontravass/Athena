@@ -7,7 +7,6 @@ import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
-import Link from 'next/link'
 
 interface DocumentsData {
   createdAt: string
@@ -17,7 +16,8 @@ interface DocumentsData {
   updatedAt: string
 }
 
-function Documents() {
+function ShareDocuments({ params }: { params: { id: string } }) {
+  const fileId = params.id
   const dispatch = useAppDispatch()
   const [documentsData, setDocumentsData] = useState<DocumentsData[]>([])
   const [selectedFileId, setSelectedFileId] = useState<string>('')
@@ -104,7 +104,7 @@ function Documents() {
     console.log({ selectedFileId })
   }
 
-  const shareCurrentDocument = (index: number) => {
+  const createShareToken = () => {
     console.log(documentsData[index])
     console.log(documentsData[index].id)
     setSelectedFileId(documentsData[index].id)
@@ -113,7 +113,17 @@ function Documents() {
 
   return (
     <>
-      <TitleCard title="Medical Documents" topMargin="mt-2">
+      <TitleCard
+        title={'Tokens ' + fileId}
+        topMargin="mt-2"
+        TopSideButtons={
+          <div className="inline-block float-right">
+            <button className="btn px-6 btn-sm normal-case btn-primary" onClick={createShareToken}>
+              Upload
+            </button>
+          </div>
+        }
+      >
         {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
         {documentsData?.length > 0 && (
           <div className="overflow-x-auto w-full">
@@ -124,7 +134,8 @@ function Documents() {
                   <th>Created At</th>
                   <th>Updated At</th>
                   <th>Open</th>
-                  <th>Tokens</th>
+                  <th>Share</th>
+                  <th>Revoke</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,9 +151,12 @@ function Documents() {
                     </td>
                     <td>
                       <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                        <Link href={'./documents/' + doc.id}>
-                          <EyeIcon className="w-5" />
-                        </Link>
+                        <EyeIcon className="w-5" />
+                      </button>
+                    </td>
+                    <td>
+                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
+                        <EyeIcon className="w-5" />
                       </button>
                     </td>
                   </tr>
@@ -158,4 +172,4 @@ function Documents() {
   )
 }
 
-export default Documents
+export default ShareDocuments

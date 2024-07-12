@@ -2,6 +2,8 @@ FROM node:20-alpine as base
 
 LABEL org.opencontainers.image.source=https://github.com/aarontravass/medihacks2024
 
+LABEL org.opencontainers.image.licenses=MIT
+
 RUN corepack enable
 
 ENV PNPM_HOME="/pnpm"
@@ -37,9 +39,19 @@ WORKDIR /app/packages/prisma
 
 RUN pnpm generate
 
-FROM base as api
+FROM base as platform
 
 WORKDIR /app/packages/platform
+
+RUN pnpm build
+
+EXPOSE 3000
+
+CMD [ "pnpm", "start" ]
+
+FROM base as upload
+
+WORKDIR /app/packages/upload
 
 RUN pnpm build
 

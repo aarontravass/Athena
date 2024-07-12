@@ -1,13 +1,11 @@
 'use client'
-import { FormEventHandler, useEffect, useState } from 'react'
-import EyeIcon from '@heroicons/react/24/outline/EyeIcon'
+import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@/lib/hooks'
 import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
 import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
-import { showNotification } from '@/components/features/common/headerSlice'
 import { DocumentsListData, PatientsListData } from '@/lib/models'
 
 function Documents() {
@@ -16,9 +14,7 @@ function Documents() {
   const [selectedPatient, setSelectedPatient] = useState<PatientsListData>()
   const [selectedPatientId, setSelectedPatientId] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
-  // const [currentFileUploadData, setCurrentFileUploadData] = useState<File | null>()
   let currentFileUploadData: File | null = null
-  // let errorMessage = ''
 
   const FETCH_PATIENTS = gql`
     query FetchPatients {
@@ -93,7 +89,6 @@ function Documents() {
     console.log({ fileData })
     if (fileData && fileData?.length > 0) {
       currentFileUploadData = fileData[0]
-      // setCurrentFileUploadData(fileData[0])
       console.log('AS', fileData[0])
       console.log('AS', typeof fileData[0])
       console.log('AS', { currentFileUploadData })
@@ -143,7 +138,6 @@ function Documents() {
     // try {
     await uploadRequest({
       variables: { file: currentFileUploadData, userId: selectedPatientId }
-      // refetchQueries: [{ query: GET_FILES_QUERY }]
     })
       .then((res) => {
         console.log({ res, fileUploadData })
@@ -152,9 +146,6 @@ function Documents() {
         console.error({ error })
         setErrorMessage(error?.message)
       })
-    // } catch (err) {
-    //   console.error(err)
-    // }
   }
 
   return (
@@ -197,7 +188,6 @@ function Documents() {
                     <th>File Name</th>
                     <th>Created At</th>
                     <th>Updated At</th>
-                    {/* <th></th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -206,11 +196,6 @@ function Documents() {
                       <td>{doc.fileName}</td>
                       <td>{doc.createdAt}</td>
                       <td>{doc.updatedAt}</td>
-                      {/* <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                        <EyeIcon className="w-5" />
-                      </button>
-                    </td> */}
                     </tr>
                   ))}
                 </tbody>

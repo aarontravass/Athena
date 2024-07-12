@@ -18,7 +18,7 @@ export const createBucket = (bucketName: string) => client.createBucket({ Bucket
 export const uploadFile = async ({ file, user }: { file: File; user: User }) => {
   await client.putObject({ Body: await file.text(), Key: file.name, Bucket: user.id })
   const out = await headObject({ fileName: file.name, bucketName: user.id })
-  return out.Metadata?.['cid']
+  return out?.Metadata?.['cid']
 }
 
 export const fetchFileAsBase64 = async (patientFile: PatientFile) => {

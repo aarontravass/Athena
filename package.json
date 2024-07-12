@@ -14,7 +14,8 @@
     "globals": "^15.8.0",
     "husky": "^9.0.11",
     "lerna": "^8.1.6",
-    "prettier": "^3.3.2"
+    "prettier": "^3.3.2",
+    "tsx": "^4.16.2"
   },
   "scripts": {
     "lint": "eslint .",
@@ -22,5 +23,8 @@
     "format:fix": "prettier --write \"./**/*.{ts,js,tsx}\"",
     "prepare": "husky"
   },
-  "packageManager": "pnpm@8.15.4"
+  "packageManager": "pnpm@8.15.4",
+  "dependencies": {
+    "esbuild": "^0.23.0"
+  }
 }
