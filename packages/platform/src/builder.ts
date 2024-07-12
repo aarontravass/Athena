@@ -8,7 +8,7 @@ import { prisma } from './prisma'
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth'
 import ValidationPlugin from '@pothos/plugin-validation'
 import type PrismaTypes from '@medihacks/prisma/pothos-types'
-import { newUser, userRequired } from './validation/auth'
+import { hasRole } from './validation/auth'
 
 export interface CustomContext extends YogaInitialContext {
   privyDid: string
@@ -53,11 +53,11 @@ export const builder = new SchemaBuilder<{
     filterConnectionTotalCount: true,
     dmmf: Prisma.dmmf
   },
-  authScopes: () => ({
+  authScopes: (ctx) => ({
     public: true,
-    newUser: () => newUser(),
-    userRequired: () => userRequired(),
-    hasRole: () => userRequired()
+    newUser: () => !!ctx.privyDid,
+    userRequired: () => !!(ctx.privyDid && ctx.userId),
+    hasRole: (role) => hasRole({ role, ctx })
   }),
   validationOptions: {
     validationError: (zodError) => new GraphQLError(zodError.message)

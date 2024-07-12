@@ -1,30 +1,28 @@
 import { CustomContext } from '../builder'
 import { verifyAuthToken } from '../privy'
-import jsonwebtoken from 'jsonwebtoken'
-import { JWT_KEY } from '../constants'
-import { JWTPayload } from '../types'
 import { prisma } from '../prisma'
+import { parseUCAN, verifyUCAN } from '../ucan'
+import { UserRole } from '@medihacks/prisma'
 
 export const fetchPrivyDidFromAuth = (authToken: string) =>
   verifyAuthToken(authToken)
     .then((payload) => payload.userId)
     .catch(() => null)
 
-export const userRequired = () => {
-  return true
-}
-
-export const newUser = () => {
-  return true
-}
-
-const verifyToken = async (authToken: string): Promise<Partial<CustomContext> | null> => {
+const verifyToken = async (token: string): Promise<Partial<CustomContext> | null> => {
   try {
-    const payload = jsonwebtoken.verify(authToken, JWT_KEY!, {
-      algorithms: ['HS256'],
-      issuer: 'medihacks'
-    }) as JWTPayload
-    return { ...payload, isPrivyAuth: false, authToken }
+    const res = await verifyUCAN({
+      token,
+      capability: {
+        with: { scheme: 'fs', hierPart: `//filebase` },
+        can: { namespace: 'filebase', segments: ['OPEN'] }
+      }
+    })
+    if (!res) return null
+
+    const parsedValue = parseUCAN(token)
+
+    return { ...parsedValue.payload.fct?.[0], isPrivyAuth: false, authToken: token }
   } catch (error) {
     return null
   }
@@ -47,3 +45,14 @@ export const extractContext = async (headers: Headers): Promise<Partial<CustomCo
     return {}
   }
 }
+
+export const hasRole = ({ role, ctx }: { role: UserRole; ctx: CustomContext }) =>
+  prisma.user
+    .findUniqueOrThrow({
+      where: {
+        id: ctx.userId,
+        role
+      }
+    })
+    .then(() => true)
+    .catch(() => false)
