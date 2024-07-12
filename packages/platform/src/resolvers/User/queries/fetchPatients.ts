@@ -11,6 +11,7 @@ builder.queryField('fetchPatients', (t) =>
     },
     resolve: async (query, root, _, ctx) =>
       prisma.user.findMany({
+        ...query,
         where: {
           role: UserRole.Patient,
           id: {

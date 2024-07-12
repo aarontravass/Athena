@@ -29,9 +29,7 @@ export const generateUCAN = async (user: User) => {
 
 export const verifyUCAN = async (token: string) => {
   const result = await ucans.verify(token, {
-    // to make sure we're the intended recipient of this UCAN
     audience: ORG_DID,
-    // A callback for figuring out whether a UCAN is known to be revoked
     isRevoked: (ucan) =>
       prisma.authToken
         .findUniqueOrThrow({
@@ -46,9 +44,6 @@ export const verifyUCAN = async (token: string) => {
         })
         .then(() => false)
         .catch(() => true),
-
-    // as a stub. Should look up the UCAN CID in a DB.
-    // capabilities required for this invocation & which owner we expect for each capability
     requiredCapabilities: [
       {
         capability: {

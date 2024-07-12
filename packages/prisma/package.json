@@ -17,8 +17,7 @@
   },
   "scripts": {
     "generate": "prisma generate",
-    "migrate:dev": "hcp vault-secrets run --app=medihacks -- prisma migrate dev --name init",
-    "migrate:deploy": "prisma migrate deploy"
+    "migrate:dev": "hcp vault-secrets run --app=medihacks -- prisma migrate dev --name init"
   },
   "bugs": {
     "url": "https://github.com/aarontravass/medihacks2024/issues"
