@@ -14,6 +14,7 @@ function Documents() {
   const [selectedPatient, setSelectedPatient] = useState<PatientsListData>()
   const [selectedPatientId, setSelectedPatientId] = useState<string>('')
   const [errorMessage, setErrorMessage] = useState<string>('')
+  const [uploadLoading, setUploadLoading] = useState<boolean>(false)
   let currentFileUploadData: File | null = null
 
   const FETCH_PATIENTS = gql`
@@ -35,23 +36,21 @@ function Documents() {
     }
   `
 
-  const UPLOAD_FILE = gql`
-    mutation UploadFile($file: File!, $userId: ID!) {
-      uploadFile(file: $file, userId: $userId) {
-        user {
-          patientFiles {
-            createdAt
-            fileName
-            id
-            ipfsCid
-            updatedAt
-          }
-        }
-      }
+  const GENERATE_PRE_SIGNED_UPLOAD_URL = gql`
+    mutation GeneratePreSignedUploadUrl($userId: ID!) {
+      generatePreSignedUploadUrl(userId: $userId)
     }
   `
-  const [uploadRequest, { data: fileUploadData, loading: fileUploadLoading, error: fileUploadError }] =
-    useMutation(UPLOAD_FILE)
+  const [
+    generatePreSignedUploadUrlGql,
+    {
+      data: generatePreSignedUploadUrlData,
+      loading: generatePreSignedUploadUrlLoading,
+      error: generatePreSignedUploadUrlError
+    }
+  ] = useMutation(GENERATE_PRE_SIGNED_UPLOAD_URL, {
+    context: { appTokenName: APP_NAME }
+  })
 
   const { data: patientsListData, error: patientsListDataError } = useQuery(FETCH_PATIENTS, {
     context: { appTokenName: APP_NAME }
@@ -113,11 +112,7 @@ function Documents() {
                   />
                 </div>
                 <div className="grid mt-7">
-                  <button
-                    type="submit"
-                    disabled={fileUploadLoading}
-                    className="btn px-6 btn-sm normal-case btn-primary"
-                  >
+                  <button type="submit" disabled={uploadLoading} className="btn px-6 btn-sm normal-case btn-primary">
                     Upload File
                   </button>
                   {errorMessage && <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>}
@@ -132,15 +127,38 @@ function Documents() {
 
   const uploadFileDocument = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setUploadLoading(true)
     console.log('uploadFileDocument Hello world')
-    console.log({ currentFileUploadData })
+    console.log({ currentFileUploadData, selectedPatientId })
     if (!currentFileUploadData) return
     // try {
-    await uploadRequest({
-      variables: { file: currentFileUploadData, userId: selectedPatientId }
+    await generatePreSignedUploadUrlGql({
+      variables: { userId: selectedPatientId }
     })
-      .then((res) => {
-        console.log({ res, fileUploadData })
+      .then(async (res) => {
+        const uploadUrlApi = res?.data?.generatePreSignedUploadUrl
+        if (uploadUrlApi) {
+          // let formData = new FormData()
+          // currentFileUploadData?.arrayBuffer().then((arrayBufferData)=>{
+          //   const blobData=new Blob()
+          // })
+          // formData.append('file', currentFileUploadData)
+          // formData.append('password', 'John123')
+
+          await fetch(uploadUrlApi, {
+            body: currentFileUploadData,
+            method: 'POST'
+          })
+            .then((uploadRes) => {
+              console.log({ uploadRes })
+            })
+            .catch((uploadError) => {
+              console.log({ uploadError })
+            })
+        } else {
+          setErrorMessage('Upload URL is not valid')
+        }
+        console.log({ res, generatePreSignedUploadUrlData })
       })
       .catch((error) => {
         console.error({ error })
