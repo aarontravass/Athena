@@ -8,6 +8,7 @@ import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface DocumentsData {
   createdAt: string
@@ -36,7 +37,10 @@ function Documents() {
 
   const FETCH_PATIENT_FILE_BLOB = gql`
     query FetchPatientFileBlob($fileId: ID!) {
-      fetchPatientFileBlob(fileId: $fileId)
+      fetchPatientFileBlob(fileId: $fileId) {
+        base64
+        fileName
+      }
     }
   `
 
@@ -70,27 +74,18 @@ function Documents() {
       if (patientFilesBlobData) {
         dispatch(
           openModal({
-            title: 'Confirmation',
+            title: 'Image Viewer',
             bodyType: MODAL_BODY_TYPES.DEFAULT,
             bodyContent: (
               <>
-                {/* {patientFilesBlobData?.fetchPatientFileBlob && (
-                  <FileViewer
-                    file={{
-                      data: pdfData,
-                      mimeType: 'application/pdf',
-                      name: 'sample.pdf' // for download
-                    }}
-                  />
-                )} */}
-                <button className="btn px-6 btn-sm normal-case btn-primary" onClick={modalButton}>
-                  Hello World
-                </button>
+                {patientFilesBlobData?.fetchPatientFileBlob && (
+                  <Image
+                    alt="fileImage"
+                    src={`data:image/*;base64,${patientFilesBlobData?.fetchPatientFileBlob}`}
+                  ></Image>
+                )}
               </>
-            ),
-            extraObject: {
-              fileData: patientFilesBlobData?.fetchPatientFileBlob
-            }
+            )
           })
         )
       }

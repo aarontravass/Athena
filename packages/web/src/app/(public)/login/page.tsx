@@ -23,6 +23,9 @@ const LoginPage = (): JSX.Element => {
       createAuthToken(role: $role) {
         authToken
         refreshToken
+        user {
+          role
+        }
       }
     }
   `
@@ -49,16 +52,17 @@ const LoginPage = (): JSX.Element => {
 
   const handleRegister = async () => {
     const role = isPatient ? USER_ROLES.Patient : USER_ROLES.Doctor
-    const roleUrl = role.toLowerCase()
     await registerUser({ variables: { role } })
       .then(async (result) => {
         console.log({ result })
         localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
         localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+        const roleUrl = (result?.data?.createAuthToken?.user?.role as string).toLowerCase()
         localStorage.setItem(USER_ROLE, roleUrl)
         await authLogin(result?.data?.createAuthToken?.authToken)
         setIsLoading(false)
-        if (isPatient) router.push('/patient/documents')
+        const loginRolePatient = roleUrl == USER_ROLES.Patient.toLowerCase()
+        if (loginRolePatient) router.push('/patient/documents')
         else router.push('/doctor/dashboard')
       })
       .catch((error) => {
