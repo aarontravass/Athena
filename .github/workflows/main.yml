@@ -13,11 +13,15 @@ jobs:
     name: check_adminA
     runs-on: ubuntu-latest
     env:
-      NAME_ADMIN: aarontravass
+      NAME_ADMIN: ashutoshspunyani99-tamu
     steps:
       - name: st1
         if: ${{ github.actor != env.NAME_ADMIN }}
-        run: exit 1
+        run: | 
+          echo "Actor is ${{ github.actor }}"
+          exit 1
       - name: st2
         if: ${{ github.actor == env.NAME_ADMIN }}
-        run: echo "ok"
+        run: |
+          echo "Actor is ${{ github.actor }}"
+          echo "ok"
