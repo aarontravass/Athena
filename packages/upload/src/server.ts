@@ -4,11 +4,16 @@ import FastifyMultipart from '@fastify/multipart'
 import { isTokenValid } from './utils'
 import { uploadFile } from './filebase'
 import { prisma } from './prisma'
+import FastifyCors from '@fastify/cors'
 
 const fastify = Fastify({
   logger: true
 })
 fastify.register(FastifyMultipart)
+await fastify.register(FastifyCors, {
+  origin: true,
+  methods: ['POST']
+})
 
 fastify.post('/upload', async (req, res) => {
   const token = (req.query as Record<string, string>).token

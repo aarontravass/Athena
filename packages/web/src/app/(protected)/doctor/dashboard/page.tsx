@@ -30,25 +30,12 @@ const PatientDashboard = () => {
     }
   `
 
-  const GENERATE_PRE_SIGNED_URL = gql`
-    mutation GeneratePreSignedUploadUrl($userId: ID!) {
-      generatePreSignedUploadUrl(userId: $userId)
-    }
-  `
-
   const [addPatient, { data: addPatientData, loading: addPatientLoading, error: addPatientError }] = useMutation(
     ADD_PATIENT,
     {
       context: { appTokenName: APP_NAME }
     }
   )
-
-  const [
-    generatePreSignedUrl,
-    { data: generatePreSignedUrlData, loading: generatePreSignedUrlLoading, error: generatePreSignedUrlError }
-  ] = useMutation(GENERATE_PRE_SIGNED_URL, {
-    context: { appTokenName: APP_NAME }
-  })
 
   const onAddingThePatient = async () => {
     setSuccessMessage('')
@@ -64,15 +51,6 @@ const PatientDashboard = () => {
       })
     setSuccessMessage('')
     setErrorMessage('')
-    await generatePreSignedUrl({ variables: { userId: selectedPatientId } })
-      .then(async (gen_result) => {
-        console.log({ gen_result })
-        setSuccessMessage('Presigned URL generated successfully')
-      })
-      .catch((error) => {
-        console.error({ error })
-        setErrorMessage(error?.message)
-      })
   }
 
   const onPatientChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

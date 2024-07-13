@@ -138,23 +138,22 @@ function Documents() {
       .then(async (res) => {
         const uploadUrlApi = res?.data?.generatePreSignedUploadUrl
         if (uploadUrlApi) {
-          // let formData = new FormData()
-          // currentFileUploadData?.arrayBuffer().then((arrayBufferData)=>{
-          //   const blobData=new Blob()
-          // })
-          // formData.append('file', currentFileUploadData)
-          // formData.append('password', 'John123')
+          let formData = new FormData()
+          currentFileUploadData?.arrayBuffer().then(async (arrayBufferData) => {
+            const blobData = new Blob([arrayBufferData], { type: currentFileUploadData?.type })
+            formData.append('file', blobData, currentFileUploadData?.name)
 
-          await fetch(uploadUrlApi, {
-            body: currentFileUploadData,
-            method: 'POST'
+            await fetch(uploadUrlApi, {
+              body: formData,
+              method: 'POST'
+            })
+              .then((uploadRes) => {
+                console.log({ uploadRes })
+              })
+              .catch((uploadError) => {
+                console.log({ uploadError })
+              })
           })
-            .then((uploadRes) => {
-              console.log({ uploadRes })
-            })
-            .catch((uploadError) => {
-              console.log({ uploadError })
-            })
         } else {
           setErrorMessage('Upload URL is not valid')
         }

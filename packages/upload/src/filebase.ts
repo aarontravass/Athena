@@ -20,8 +20,7 @@ export const uploadFile = async ({ file, user }: { file: MultipartFile; user: Us
     Bucket: user.id,
     ContentType: file.mimetype
   })
-  const out = await headObject({ fileName: file.filename, bucketName: user.id })
-  return out
+  return headObject({ fileName: file.filename, bucketName: user.id })
 }
 
 export const headObject = ({ bucketName, fileName }: { bucketName: string; fileName: string }) =>
