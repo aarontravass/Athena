@@ -12,8 +12,10 @@ const fastify = Fastify({
 fastify.register(FastifyMultipart)
 await fastify.register(FastifyCors, {
   origin: true,
-  methods: ['POST']
+  methods: ['POST', 'GET', 'HEAD']
 })
+
+fastify.get('/', () => 'hello world')
 
 fastify.post('/upload', async (req, res) => {
   const token = (req.query as Record<string, string>).token
