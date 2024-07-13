@@ -27,7 +27,7 @@ export default function ProtectedLayout({ children, params }: LayoutProps) {
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
-      router.replace('/login')
+      router.replace('/')
     }
   }, [isAuthenticated, isLoading, router])
 

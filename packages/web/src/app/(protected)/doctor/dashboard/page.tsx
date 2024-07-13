@@ -33,7 +33,7 @@ const PatientDashboard = () => {
   const [addPatient, { data: addPatientData, loading: addPatientLoading, error: addPatientError }] = useMutation(
     ADD_PATIENT,
     {
-      context: { appTokenName: APP_NAME }
+      context: { appTokenName: APP_NAME + ':token' }
     }
   )
 
@@ -59,7 +59,7 @@ const PatientDashboard = () => {
   }
 
   const { data: patientsListData, error: patientsListDataError } = useQuery(FETCH_ALL_PATIENTS, {
-    context: { appTokenName: APP_NAME }
+    context: { appTokenName: APP_NAME + ':token' }
   })
 
   useEffect(() => {

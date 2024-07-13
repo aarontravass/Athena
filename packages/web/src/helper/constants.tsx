@@ -1,6 +1,7 @@
-export const APP_NAME = 'medDriveToken'
+export const APP_NAME_TITLE = 'Athena'
+export const APP_NAME = 'athena'
 export const USER_ROLE = 'userRole'
-export const PRIVY_APP_NAME = 'privyAuthToken'
+export const PRIVY_APP_NAME = 'privyAuth'
 export const API_URL = 'http://localhost:3000/graphql'
 export enum USER_ROLES {
   Patient = 'Patient',

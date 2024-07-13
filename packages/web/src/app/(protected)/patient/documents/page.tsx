@@ -45,12 +45,12 @@ function Documents() {
   `
 
   const { data: patientFilesData, error: patientFilesError } = useQuery(FETCH_PATIENT_FILES, {
-    context: { appTokenName: APP_NAME }
+    context: { appTokenName: APP_NAME + ':token' }
   })
 
   const { data: patientFilesBlobData, error: patientFilesBlobError } = useQuery(FETCH_PATIENT_FILE_BLOB, {
     variables: { fileId: selectedFileId },
-    context: { appTokenName: APP_NAME },
+    context: { appTokenName: APP_NAME + ':token' },
     skip: !selectedFileId
   })
 

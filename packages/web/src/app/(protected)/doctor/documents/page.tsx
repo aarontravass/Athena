@@ -49,11 +49,11 @@ function Documents() {
       error: generatePreSignedUploadUrlError
     }
   ] = useMutation(GENERATE_PRE_SIGNED_UPLOAD_URL, {
-    context: { appTokenName: APP_NAME }
+    context: { appTokenName: APP_NAME + ':token' }
   })
 
   const { data: patientsListData, error: patientsListDataError } = useQuery(FETCH_PATIENTS, {
-    context: { appTokenName: APP_NAME }
+    context: { appTokenName: APP_NAME + ':token' }
   })
 
   useEffect(() => {

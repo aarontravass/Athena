@@ -6,8 +6,8 @@ import { gql, useMutation } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import Image from 'next/image'
 import loginSideImage from '@/../public/images/login/loginSideImage.png'
-import mainLogo from '@/../public/images/login/mainLogo.png'
-import { APP_NAME, PRIVY_APP_NAME, USER_ROLE, USER_ROLES } from '@/helper/constants'
+import mainLogo from '@/../public/images/login/logo.svg'
+import { APP_NAME, APP_NAME_TITLE, PRIVY_APP_NAME, USER_ROLE, USER_ROLES } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth'
 
@@ -32,7 +32,7 @@ const LoginPage = (): JSX.Element => {
   const router = useRouter()
   const disableLogin = !ready
   const [registerUser, { data, error }] = useMutation(REGISTER_PATIENT_USER, {
-    context: { appTokenName: PRIVY_APP_NAME }
+    context: { appTokenName: PRIVY_APP_NAME + ':token' }
   })
 
   const readyAndNoAuthentication = () => {
@@ -55,8 +55,8 @@ const LoginPage = (): JSX.Element => {
     await registerUser({ variables: { role } })
       .then(async (result) => {
         console.log({ result })
-        localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
-        localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+        localStorage.setItem(APP_NAME + ':token', result?.data?.createAuthToken?.authToken)
+        localStorage.setItem(APP_NAME + ':refreshToken', result?.data?.createAuthToken?.refreshToken)
         const roleUrl = (result?.data?.createAuthToken?.user?.role as string).toLowerCase()
         localStorage.setItem(USER_ROLE, roleUrl)
         await authLogin(result?.data?.createAuthToken?.authToken)
@@ -82,7 +82,7 @@ const LoginPage = (): JSX.Element => {
       setIsLoading(true)
       console.log({ user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount })
       const accessToken = await getAccessToken()
-      if (accessToken) localStorage.setItem(PRIVY_APP_NAME, accessToken)
+      if (accessToken) localStorage.setItem(PRIVY_APP_NAME + ':token', accessToken)
       handleRegister()
       setIsLoading(false)
     },
@@ -107,7 +107,7 @@ const LoginPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>Login · MedDrive</title>
+        <title>Login · {APP_NAME_TITLE}</title>
       </Head>
       <div className="min-h-screen bg-base-200 flex items-center">
         <div className="card mx-auto w-full max-w-5xl shadow-xl">
@@ -118,7 +118,7 @@ const LoginPage = (): JSX.Element => {
                   <div className="max-w-md">
                     <h1 className="text-3xl text-center font-bold ">
                       <Image src={mainLogo} className="w-12 inline-block mr-2 mask mask-circle" alt="dashwind-logo" />
-                      MedDrive
+                      {APP_NAME_TITLE}
                     </h1>
 
                     <div className="text-center mt-12">

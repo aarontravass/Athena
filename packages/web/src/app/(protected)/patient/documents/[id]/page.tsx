@@ -54,20 +54,20 @@ function ShareDocuments({ params }: { params: { id: string } }) {
     refetch: listShareTokensRefetch
   } = useQuery(LIST_SHARE_TOKENS, {
     variables: { fileId },
-    context: { appTokenName: APP_NAME }
+    context: { appTokenName: APP_NAME + ':token' }
   })
 
   const [createShareTokenGql, { data: createShareTokenData, error: createShareTokenError }] = useMutation(
     CREATE_SHARE_TOKEN,
     {
-      context: { appTokenName: APP_NAME }
+      context: { appTokenName: APP_NAME + ':token' }
     }
   )
 
   const [revokeShareTokenGql, { data: revokeShareTokenData, error: revokeShareTokenError }] = useMutation(
     REVOKE_SHARE_TOKEN,
     {
-      context: { appTokenName: APP_NAME }
+      context: { appTokenName: APP_NAME + ':token' }
     }
   )
 

@@ -13,10 +13,10 @@ import auth from '@/lib/auth'
 import routesObj from '@/helper/sidebar-routes'
 import { setPageTitle } from '../features/common/headerSlice'
 import { getUserInfo } from '../features/common/userSlice'
-import mainLogo from '@/../public/images/login/mainLogo.png'
+import mainLogo from '@/../public/images/login/logo.svg'
 import Image from 'next/image'
 import { useAuth } from '@/providers/auth'
-import { USER_ROLE, USER_ROLES } from '@/helper/constants'
+import { APP_NAME_TITLE, USER_ROLE, USER_ROLES } from '@/helper/constants'
 import { SidebarMenuObj } from '@/helper/types'
 
 const roleUrl = localStorage.getItem(USER_ROLE)
@@ -88,7 +88,7 @@ function LeftSidebar(props: LeftSidebarProps) {
         <li className="mb-2 font-semibold text-xl">
           <Link href="/welcome">
             <Image className="mask mask-squircle w-10" src={mainLogo} alt="DashWind Logo" />
-            DashWind
+            {APP_NAME_TITLE}
           </Link>
         </li>
         <div className="overflow-y-scroll pb-20 no-scrollbar" style={{ height: '85vh' }}>
