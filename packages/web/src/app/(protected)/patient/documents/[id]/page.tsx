@@ -5,110 +5,110 @@ import { useAppDispatch } from '@/lib/hooks'
 import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
 import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
+import SuccessText from '@/components/typography/success-text'
+import DocumentDuplicateIcon from '@heroicons/react/24/solid/DocumentDuplicateIcon'
+import TrashIcon from '@heroicons/react/24/solid/TrashIcon'
+import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon'
 
-interface DocumentsData {
+interface ShareTokenData {
   createdAt: string
-  fileName: string
   id: string
-  ipfsCid: string
+  token: string
   updatedAt: string
 }
 
 function ShareDocuments({ params }: { params: { id: string } }) {
   const fileId = params.id
   const dispatch = useAppDispatch()
-  const [documentsData, setDocumentsData] = useState<DocumentsData[]>([])
-  const [selectedFileId, setSelectedFileId] = useState<string>('')
+  const [shareTokenList, setShareTokenList] = useState<ShareTokenData[]>([])
+  const [errorMessage, setErrorMessage] = useState<string>('')
+  const [successMessage, setSuccessMessage] = useState<string>('')
 
-  const FETCH_PATIENT_FILES = gql`
-    query FetchPatientFiles {
-      fetchPatientFiles {
-        createdAt
-        fileName
+  const LIST_SHARE_TOKENS = gql`
+    query ListShareTokens($fileId: ID!) {
+      listShareTokens(fileId: $fileId) {
         id
-        ipfsCid
+        token
+        createdAt
         updatedAt
       }
     }
   `
 
-  const FETCH_PATIENT_FILE_BLOB = gql`
-    query FetchPatientFileBlob($fileId: ID!) {
-      fetchPatientFileBlob(fileId: $fileId)
+  const CREATE_SHARE_TOKEN = gql`
+    mutation CreateShareToken($fileId: ID!, $ttl: Int!) {
+      createShareToken(fileId: $fileId, ttl: $ttl)
+    }
+  `
+  const REVOKE_SHARE_TOKEN = gql`
+    mutation RevokeShareToken($tokenId: ID!) {
+      revokeShareToken(tokenId: $tokenId)
     }
   `
 
-  const { data: patientFilesData, error: patientFilesError } = useQuery(FETCH_PATIENT_FILES, {
+  const {
+    data: listShareTokensData,
+    error: listShareTokensError,
+    refetch: listShareTokensRefetch
+  } = useQuery(LIST_SHARE_TOKENS, {
+    variables: { fileId },
     context: { appTokenName: APP_NAME }
   })
 
-  const { data: patientFilesBlobData, error: patientFilesBlobError } = useQuery(FETCH_PATIENT_FILE_BLOB, {
-    variables: { fileId: selectedFileId },
-    context: { appTokenName: APP_NAME },
-    skip: !selectedFileId
-  })
+  const [createShareTokenGql, { data: createShareTokenData, error: createShareTokenError }] = useMutation(
+    CREATE_SHARE_TOKEN,
+    {
+      context: { appTokenName: APP_NAME }
+    }
+  )
+
+  const [revokeShareTokenGql, { data: revokeShareTokenData, error: revokeShareTokenError }] = useMutation(
+    REVOKE_SHARE_TOKEN,
+    {
+      context: { appTokenName: APP_NAME }
+    }
+  )
 
   useEffect(() => {
     dispatch(() => {
-      const docsData = patientFilesData?.fetchPatientFiles
+      const docsData = listShareTokensData?.listShareTokens
       if (docsData) {
         console.log({ docsData })
-        setDocumentsData(docsData)
+        setShareTokenList(docsData)
       }
     })
-  }, [patientFilesData])
+  }, [listShareTokensData, revokeShareTokenData])
 
-  const modalButton = () => {
-    console.log('Hhllo')
+  const createShareToken = async () => {
+    setSuccessMessage('')
+    setErrorMessage('')
+    await createShareTokenGql({ variables: { fileId, ttl: 3600 * 5 } })
+      .then(async (result) => {
+        console.log({ result })
+        setSuccessMessage('Token created successfully')
+        await listShareTokensRefetch()
+      })
+      .catch((error) => {
+        console.error({ error })
+        setErrorMessage(error?.message)
+      })
   }
 
-  useEffect(() => {
-    dispatch(() => {
-      console.log({ patientFilesBlobData })
-      if (patientFilesBlobData) {
-        dispatch(
-          openModal({
-            title: 'Confirmation',
-            bodyType: MODAL_BODY_TYPES.DEFAULT,
-            bodyContent: (
-              <>
-                {/* {patientFilesBlobData?.fetchPatientFileBlob && (
-                  <FileViewer
-                    file={{
-                      data: pdfData,
-                      mimeType: 'application/pdf',
-                      name: 'sample.pdf' // for download
-                    }}
-                  />
-                )} */}
-                <button className="btn px-6 btn-sm normal-case btn-primary" onClick={modalButton}>
-                  Hello World
-                </button>
-              </>
-            ),
-            extraObject: {
-              fileData: patientFilesBlobData?.fetchPatientFileBlob
-            }
-          })
-        )
-      }
-    })
-  }, [patientFilesBlobData])
-
-  const openCurrentDocument = (index: number) => {
-    console.log(documentsData[index])
-    console.log(documentsData[index].id)
-    setSelectedFileId(documentsData[index].id)
-    console.log({ selectedFileId })
-  }
-
-  const createShareToken = () => {
-    console.log(documentsData[index])
-    console.log(documentsData[index].id)
-    setSelectedFileId(documentsData[index].id)
-    console.log({ selectedFileId })
+  const revokeShareToken = async (tokenId: string) => {
+    setSuccessMessage('')
+    setErrorMessage('')
+    await revokeShareTokenGql({ variables: { tokenId } })
+      .then(async (result) => {
+        console.log({ result })
+        setSuccessMessage('Token deleted successfully')
+        await listShareTokensRefetch()
+      })
+      .catch((error) => {
+        console.error({ error })
+        setErrorMessage(error?.message)
+      })
   }
 
   return (
@@ -119,44 +119,44 @@ function ShareDocuments({ params }: { params: { id: string } }) {
         TopSideButtons={
           <div className="inline-block float-right">
             <button className="btn px-6 btn-sm normal-case btn-primary" onClick={createShareToken}>
-              Upload
+              Create Token
             </button>
           </div>
         }
       >
-        {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
-        {documentsData?.length > 0 && (
+        {!shareTokenList?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
+        {shareTokenList?.length > 0 && (
           <div className="overflow-x-auto w-full">
             <table className="table w-full">
               <thead>
                 <tr>
-                  <th>File Name</th>
+                  <th>Sr No</th>
                   <th>Created At</th>
                   <th>Updated At</th>
-                  <th>Open</th>
-                  <th>Share</th>
+                  <th>Copy Link</th>
+                  <th>Open Link</th>
                   <th>Revoke</th>
                 </tr>
               </thead>
               <tbody>
-                {documentsData.map((doc: DocumentsData, k: number) => (
+                {shareTokenList.map((doc: ShareTokenData, k: number) => (
                   <tr key={k}>
-                    <td>{doc.fileName}</td>
+                    <td>{k + 1}</td>
                     <td>{doc.createdAt}</td>
                     <td>{doc.updatedAt}</td>
                     <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                        <EyeIcon className="w-5" />
+                      <button className="btn btn-square btn-ghost">
+                        <DocumentDuplicateIcon className="w-5" />
                       </button>
                     </td>
                     <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                        <EyeIcon className="w-5" />
+                      <button className="btn btn-square btn-ghost">
+                        <ArrowTopRightOnSquareIcon className="w-5" />
                       </button>
                     </td>
                     <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                        <EyeIcon className="w-5" />
+                      <button className="btn btn-square btn-ghost" onClick={() => revokeShareToken(doc.id)}>
+                        <TrashIcon className="w-5" />
                       </button>
                     </td>
                   </tr>
@@ -166,8 +166,8 @@ function ShareDocuments({ params }: { params: { id: string } }) {
           </div>
         )}
       </TitleCard>
-      {patientFilesError?.message && <ErrorText styleClass="mt-8">{patientFilesError.message}</ErrorText>}
-      {patientFilesBlobError?.message && <ErrorText styleClass="mt-8">{patientFilesBlobError.message}</ErrorText>}
+      {errorMessage && <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>}
+      {successMessage && <SuccessText styleClass="mt-8">{successMessage}</SuccessText>}
     </>
   )
 }

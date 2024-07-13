@@ -7,7 +7,7 @@ import ErrorText from '@/components/typography/error-text'
 import Image from 'next/image'
 import loginSideImage from '@/../public/images/login/loginSideImage.png'
 import mainLogo from '@/../public/images/login/mainLogo.png'
-import { APP_NAME, PRIVY_APP_NAME } from '@/helper/constants'
+import { APP_NAME, PRIVY_APP_NAME, USER_ROLE, USER_ROLES } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth'
 
@@ -48,16 +48,18 @@ const LoginPage = (): JSX.Element => {
   }, [ready, authenticated])
 
   const handleRegister = async () => {
-    const role = isPatient ? 'Patient' : 'Doctor'
+    const role = isPatient ? USER_ROLES.Patient : USER_ROLES.Doctor
     const roleUrl = role.toLowerCase()
     await registerUser({ variables: { role } })
       .then(async (result) => {
         console.log({ result })
         localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
         localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
+        localStorage.setItem(USER_ROLE, roleUrl)
         await authLogin(result?.data?.createAuthToken?.authToken)
         setIsLoading(false)
-        router.push('/' + roleUrl + '/dashboard')
+        if (isPatient) router.push('/patient/documents')
+        else router.push('/doctor/dashboard')
       })
       .catch((error) => {
         setIsLoading(false)

@@ -10,13 +10,23 @@ import BookmarkSquareIcon from '@heroicons/react/24/outline/BookmarkSquareIcon'
 import ChevronUpIcon from '@heroicons/react/24/outline/ChevronUpIcon'
 import ArrowUpOnSquareIcon from '@heroicons/react/24/outline/ArrowUpOnSquareIcon'
 import auth from '@/lib/auth'
-import routes from '@/helper/sidebar-routes'
+import routesObj from '@/helper/sidebar-routes'
 import { setPageTitle } from '../features/common/headerSlice'
 import { getUserInfo } from '../features/common/userSlice'
 import mainLogo from '@/../public/images/login/mainLogo.png'
 import Image from 'next/image'
 import { useAuth } from '@/providers/auth'
+import { USER_ROLE, USER_ROLES } from '@/helper/constants'
+import { SidebarMenuObj } from '@/helper/types'
 
+const roleUrl = localStorage.getItem(USER_ROLE)
+let routes: SidebarMenuObj[] = []
+if (roleUrl == USER_ROLES.Patient.toLowerCase()) {
+  routes = routesObj.patientRoutes
+} else {
+  routes = routesObj.doctorRoutes
+}
+console.log({ roleUrl })
 interface LeftSidebarProps {}
 
 function LeftSidebar(props: LeftSidebarProps) {

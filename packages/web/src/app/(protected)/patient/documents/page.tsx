@@ -139,7 +139,7 @@ function Documents() {
                       </button>
                     </td>
                     <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
+                      <button className="btn btn-square btn-ghost">
                         <Link href={'./documents/' + doc.id}>
                           <EyeIcon className="w-5" />
                         </Link>
