@@ -18,10 +18,10 @@ jobs:
       - name: st1
         if: ${{ github.actor != env.NAME_ADMIN }}
         run: | 
-              echo "Actor is ${github.actor}
-              exit 1
+          echo "Actor is ${{ github.actor }}"
+          exit 1
       - name: st2
         if: ${{ github.actor == env.NAME_ADMIN }}
         run: |
-             echo "Actor is ${github.actor}
-             echo "ok"
+          echo "Actor is ${{ github.actor }}"
+          echo "ok"
