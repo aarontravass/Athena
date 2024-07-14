@@ -77,3 +77,23 @@ jobs:
 
       - name: Push platform image to heroku
         run: docker push registry.heroku.com/athena-platform/web
+
+      - name: Login to Heroku Container registry
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login 
+
+      - name: Release platform
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web -a athena-platform
+
+      - name: Release upload
+        env: 
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web -a athena-upload
+        
+
+      
+
+
