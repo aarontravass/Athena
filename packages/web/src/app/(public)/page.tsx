@@ -10,6 +10,9 @@ import mainLogo from '@/../public/images/login/logo.svg'
 import { APP_NAME, APP_NAME_TITLE, PRIVY_APP_NAME, USER_ROLE, USER_ROLES } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth'
+import { loadEnvFile } from 'process'
+
+loadEnvFile
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
@@ -41,6 +44,8 @@ const LoginPage = (): JSX.Element => {
       if (!authenticated) {
         setIsLoading(false)
         console.log('take')
+        console.log('NEXT_PUBLIC_API_URL', process.env.NEXT_PUBLIC_API_URL)
+        console.log('NEXT_PUBLIC_WEB_URL', process.env.NEXT_PUBLIC_WEB_URL)
         console.log({ ready, authenticated, isLoading })
       }
     }
