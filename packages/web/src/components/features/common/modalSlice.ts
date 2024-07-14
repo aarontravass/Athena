@@ -1,19 +1,18 @@
+'use client'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 interface ModalState {
   title: string
   isOpen: boolean
-  bodyType: string
-  size: string
-  extraObject: Record<string, any>
+  bodyContent: JSX.Element | null
+  response: JSX.Element | null
 }
 
 const initialState: ModalState = {
   title: '',
   isOpen: false,
-  bodyType: '',
-  size: '',
-  extraObject: {}
+  bodyContent: null,
+  response: null
 }
 
 export const modalSlice = createSlice({
@@ -22,24 +21,41 @@ export const modalSlice = createSlice({
   reducers: {
     openModal: (
       state,
-      action: PayloadAction<{ title: string; bodyType: string; extraObject?: any; size?: string }>
+      action: PayloadAction<{
+        title?: string
+        bodyContent?: JSX.Element
+        response?: JSX.Element
+      }>
     ) => {
-      const { title, bodyType, extraObject, size } = action.payload
+      const { title, bodyContent } = action.payload
       state.isOpen = true
-      state.bodyType = bodyType
-      state.title = title
-      state.size = size || 'md'
-      state.extraObject = extraObject
+      if (title) state.title = title
+      if (bodyContent) state.bodyContent = bodyContent
+    },
+    updateModal: (
+      state,
+      action: PayloadAction<{
+        title?: string
+        bodyContent?: JSX.Element
+        response?: JSX.Element
+      }>
+    ) => {
+      const { title, bodyContent, response } = action.payload
+      state.isOpen = true
+      if (title) state.title = title
+      if (bodyContent) state.bodyContent = bodyContent
+      if (response) state.response = response
+      state.response = null
     },
     closeModal: (state) => {
       state.isOpen = false
-      state.bodyType = ''
       state.title = ''
-      state.extraObject = {}
+      state.bodyContent = null
+      state.response = null
     }
   }
 })
 
-export const { openModal, closeModal } = modalSlice.actions
+export const { openModal, closeModal, updateModal } = modalSlice.actions
 
 export default modalSlice.reducer

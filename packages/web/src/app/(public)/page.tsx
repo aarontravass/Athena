@@ -6,10 +6,13 @@ import { gql, useMutation } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import Image from 'next/image'
 import loginSideImage from '@/../public/images/login/loginSideImage.png'
-import mainLogo from '@/../public/images/login/mainLogo.png'
-import { APP_NAME, PRIVY_APP_NAME } from '@/helper/constants'
+import mainLogo from '@/../public/images/login/logo.svg'
+import { APP_NAME, APP_NAME_TITLE, PRIVY_APP_NAME, USER_ROLE, USER_ROLES } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth'
+import { loadEnvFile } from 'process'
+
+loadEnvFile
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
@@ -23,13 +26,16 @@ const LoginPage = (): JSX.Element => {
       createAuthToken(role: $role) {
         authToken
         refreshToken
+        user {
+          role
+        }
       }
     }
   `
   const router = useRouter()
   const disableLogin = !ready
   const [registerUser, { data, error }] = useMutation(REGISTER_PATIENT_USER, {
-    context: { appTokenName: PRIVY_APP_NAME }
+    context: { appTokenName: PRIVY_APP_NAME + ':token' }
   })
 
   const readyAndNoAuthentication = () => {
@@ -38,6 +44,8 @@ const LoginPage = (): JSX.Element => {
       if (!authenticated) {
         setIsLoading(false)
         console.log('take')
+        console.log('NEXT_PUBLIC_API_URL', process.env.NEXT_PUBLIC_API_URL)
+        console.log('NEXT_PUBLIC_WEB_URL', process.env.NEXT_PUBLIC_WEB_URL)
         console.log({ ready, authenticated, isLoading })
       }
     }
@@ -48,27 +56,25 @@ const LoginPage = (): JSX.Element => {
   }, [ready, authenticated])
 
   const handleRegister = async () => {
-    try {
-      const role = isPatient ? 'Patient' : 'Doctor'
-      const roleUrl = role.toLowerCase()
-      await registerUser({ variables: { role } })
-        .then(async (result) => {
-          console.log({ result })
-          localStorage.setItem(APP_NAME, result?.data?.createAuthToken?.authToken)
-          localStorage.setItem(APP_NAME + 'RefreshToken', result?.data?.createAuthToken?.refreshToken)
-          await authLogin(result?.data?.createAuthToken?.authToken)
-          setIsLoading(false)
-          router.push('/' + roleUrl + '/dashboard')
-        })
-        .catch((error) => {
-          setIsLoading(false)
-          console.error({ error })
-          setErrorMessage(error?.message)
-        })
-    } catch (e) {
-      setIsLoading(false)
-      console.error(e)
-    }
+    const role = isPatient ? USER_ROLES.Patient : USER_ROLES.Doctor
+    await registerUser({ variables: { role } })
+      .then(async (result) => {
+        console.log({ result })
+        localStorage.setItem(APP_NAME + ':token', result?.data?.createAuthToken?.authToken)
+        localStorage.setItem(APP_NAME + ':refreshToken', result?.data?.createAuthToken?.refreshToken)
+        const roleUrl = (result?.data?.createAuthToken?.user?.role as string).toLowerCase()
+        localStorage.setItem(USER_ROLE, roleUrl)
+        await authLogin(result?.data?.createAuthToken?.authToken)
+        setIsLoading(false)
+        const loginRolePatient = roleUrl == USER_ROLES.Patient.toLowerCase()
+        if (loginRolePatient) router.push('/patient/documents')
+        else router.push('/doctor/dashboard')
+      })
+      .catch((error) => {
+        setIsLoading(false)
+        console.error({ error })
+        setErrorMessage(error?.message)
+      })
   }
 
   const changeRole = () => {
@@ -81,7 +87,7 @@ const LoginPage = (): JSX.Element => {
       setIsLoading(true)
       console.log({ user, isNewUser, wasAlreadyAuthenticated, loginMethod, linkedAccount })
       const accessToken = await getAccessToken()
-      if (accessToken) localStorage.setItem(PRIVY_APP_NAME, accessToken)
+      if (accessToken) localStorage.setItem(PRIVY_APP_NAME + ':token', accessToken)
       handleRegister()
       setIsLoading(false)
     },
@@ -106,7 +112,7 @@ const LoginPage = (): JSX.Element => {
   return (
     <>
       <Head>
-        <title>Login · MedDrive</title>
+        <title>Login · {APP_NAME_TITLE}</title>
       </Head>
       <div className="min-h-screen bg-base-200 flex items-center">
         <div className="card mx-auto w-full max-w-5xl shadow-xl">
@@ -117,7 +123,7 @@ const LoginPage = (): JSX.Element => {
                   <div className="max-w-md">
                     <h1 className="text-3xl text-center font-bold ">
                       <Image src={mainLogo} className="w-12 inline-block mr-2 mask mask-circle" alt="dashwind-logo" />
-                      MedDrive
+                      {APP_NAME_TITLE}
                     </h1>
 
                     <div className="text-center mt-12">
@@ -138,7 +144,7 @@ const LoginPage = (): JSX.Element => {
                       <>
                         <p className="py-2 mt-4">
                           ✓ <span className="font-semibold">Decentrailized</span> storage medical records for all your
-                          patinets
+                          patients
                         </p>
                       </>
                     )}

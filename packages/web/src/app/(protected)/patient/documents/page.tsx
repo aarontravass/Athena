@@ -2,11 +2,14 @@
 import { useEffect, useState } from 'react'
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon'
 import { useAppDispatch } from '@/lib/hooks'
-import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
+import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
 import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
+import Link from 'next/link'
+import Image from 'next/image'
+import Head from 'next/head'
 
 interface DocumentsData {
   createdAt: string
@@ -15,26 +18,11 @@ interface DocumentsData {
   ipfsCid: string
   updatedAt: string
 }
-const TopSideButtons = () => {
-  const dispatch = useAppDispatch()
 
-  const openAddNewLeadModal = () => {
-    dispatch(openModal({ title: 'Add New Lead', bodyType: MODAL_BODY_TYPES.LEAD_ADD_NEW }))
-  }
-
-  return (
-    <div className="inline-block float-right">
-      <button className="btn px-6 btn-sm normal-case btn-primary" onClick={openAddNewLeadModal}>
-        Upload
-      </button>
-    </div>
-  )
-}
 function Documents() {
   const dispatch = useAppDispatch()
   const [documentsData, setDocumentsData] = useState<DocumentsData[]>([])
   const [selectedFileId, setSelectedFileId] = useState<string>('')
-  //   const { leads } = useAppSelector((state) => state.leads)
 
   const FETCH_PATIENT_FILES = gql`
     query FetchPatientFiles {
@@ -50,17 +38,20 @@ function Documents() {
 
   const FETCH_PATIENT_FILE_BLOB = gql`
     query FetchPatientFileBlob($fileId: ID!) {
-      fetchPatientFileBlob(fileId: $fileId)
+      fetchPatientFileBlob(fileId: $fileId) {
+        base64
+        fileName
+      }
     }
   `
 
   const { data: patientFilesData, error: patientFilesError } = useQuery(FETCH_PATIENT_FILES, {
-    context: { appTokenName: APP_NAME }
+    context: { appTokenName: APP_NAME + ':token' }
   })
 
   const { data: patientFilesBlobData, error: patientFilesBlobError } = useQuery(FETCH_PATIENT_FILE_BLOB, {
     variables: { fileId: selectedFileId },
-    context: { appTokenName: APP_NAME },
+    context: { appTokenName: APP_NAME + ':token' },
     skip: !selectedFileId
   })
 
@@ -80,11 +71,20 @@ function Documents() {
       if (patientFilesBlobData) {
         dispatch(
           openModal({
-            title: 'Confirmation',
-            bodyType: MODAL_BODY_TYPES.DEFAULT,
-            extraObject: {
-              fileData: patientFilesBlobData?.fetchPatientFileBlob
-            }
+            title: 'Image Viewer',
+            bodyContent: (
+              <>
+                {patientFilesBlobData?.fetchPatientFileBlob && (
+                  <Image
+                    className="m-auto"
+                    alt="fileImage"
+                    width={700}
+                    height={700}
+                    src={`data:image/*;base64,${patientFilesBlobData?.fetchPatientFileBlob?.base64}`}
+                  ></Image>
+                )}
+              </>
+            )
           })
         )
       }
@@ -100,33 +100,47 @@ function Documents() {
 
   return (
     <>
-      <TitleCard title="Medical Documents" topMargin="mt-2" TopSideButtons={<TopSideButtons />}>
-        <div className="overflow-x-auto w-full">
-          <table className="table w-full">
-            <thead>
-              <tr>
-                <th>File Name</th>
-                <th>Created At</th>
-                <th>Updated At</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {documentsData.map((doc: DocumentsData, k: number) => (
-                <tr key={k}>
-                  <td>{doc.fileName}</td>
-                  <td>{doc.createdAt}</td>
-                  <td>{doc.updatedAt}</td>
-                  <td>
-                    <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
-                      <EyeIcon className="w-5" />
-                    </button>
-                  </td>
+      <Head>
+        <title>{APP_NAME_TITLE} | Patient - Documents</title>
+      </Head>
+      <TitleCard title="Medical Documents" topMargin="mt-2">
+        {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
+        {documentsData?.length > 0 && (
+          <div className="overflow-x-auto w-full">
+            <table className="table w-full">
+              <thead>
+                <tr>
+                  <th>File Name</th>
+                  <th>Created At</th>
+                  <th>Updated At</th>
+                  <th>Open</th>
+                  <th>Tokens</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {documentsData.map((doc: DocumentsData, k: number) => (
+                  <tr key={k}>
+                    <td>{doc.fileName}</td>
+                    <td>{doc.createdAt}</td>
+                    <td>{doc.updatedAt}</td>
+                    <td>
+                      <button className="btn btn-square btn-ghost" onClick={() => openCurrentDocument(k)}>
+                        <EyeIcon className="w-5" />
+                      </button>
+                    </td>
+                    <td>
+                      <button className="btn btn-square btn-ghost">
+                        <Link href={'./documents/' + doc.id}>
+                          <EyeIcon className="w-5" />
+                        </Link>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </TitleCard>
       {patientFilesError?.message && <ErrorText styleClass="mt-8">{patientFilesError.message}</ErrorText>}
       {patientFilesBlobError?.message && <ErrorText styleClass="mt-8">{patientFilesBlobError.message}</ErrorText>}

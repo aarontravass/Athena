@@ -1,17 +1,12 @@
 import headerSlice from '@/components/features/common/headerSlice'
 import modalSlice from '@/components/features/common/modalSlice'
-import rightDrawerSlice from '@/components/features/common/rightDrawerSlice'
-import userSlice from '@/components/features/common/userSlice'
-
 import { configureStore } from '@reduxjs/toolkit'
 
 export const makeStore = () => {
   return configureStore({
     reducer: {
       header: headerSlice,
-      rightDrawer: rightDrawerSlice,
-      modal: modalSlice,
-      user: userSlice
+      modal: modalSlice
     }
   })
 }

@@ -26,28 +26,28 @@ export interface SubmenuItem {
 /**
  * Interface for api response
  */
-export interface APIResponse {
-  payload: any
-  message: string
-}
+// export interface APIResponse {
+//   payload: any
+//   message: string
+// }
 
 /**
  * Interface for UserProfile data.
  */
-export interface UserProfile {
-  name: string
-  avatar: string
-  emailId: string
-}
+// export interface UserProfile {
+//   name: string
+//   avatar: string
+//   emailId: string
+// }
 
 /**
  * Interface for lead data.
  */
-export interface Lead {
-  first_name: string
-  last_name: string
-  description: string
-  email: string
-  avatar: string
-  id?: number
-}
+// export interface Lead {
+//   first_name: string
+//   last_name: string
+//   description: string
+//   email: string
+//   avatar: string
+//   id?: number
+// }
