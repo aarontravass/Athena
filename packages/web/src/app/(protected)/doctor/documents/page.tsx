@@ -1,12 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@/lib/hooks'
-import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
+import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
 import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import { DocumentsListData, PatientsListData } from '@/lib/models'
+import Head from 'next/head'
 
 function Documents() {
   const dispatch = useAppDispatch()
@@ -100,7 +101,6 @@ function Documents() {
       dispatch(
         openModal({
           title: 'Upload A File',
-          bodyType: MODAL_BODY_TYPES.DEFAULT,
           bodyContent: (
             <>
               <form onSubmit={uploadFileDocument} encType="multipart/form-data">
@@ -167,6 +167,9 @@ function Documents() {
 
   return (
     <>
+      <Head>
+        <title>{APP_NAME_TITLE} | Doctor - Documents</title>
+      </Head>
       <div className="form-control w-full mt-4">
         <label className="label">
           <p>Select a patient to add to your list</p>

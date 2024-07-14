@@ -1,42 +1,19 @@
 'use client'
-import { themeChange } from 'theme-change'
-import React, { useEffect, useState } from 'react'
-import BellIcon from '@heroicons/react/24/outline/BellIcon'
+import React, { useEffect } from 'react'
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon'
-import MoonIcon from '@heroicons/react/24/outline/MoonIcon'
-import SunIcon from '@heroicons/react/24/outline/SunIcon'
-import { toast } from 'react-toastify'
 import { useAppDispatch, useAppSelector } from '@/lib/hooks'
-import { removeNotificationMessage } from '../features/common/headerSlice'
-import { openRightDrawer } from '../features/common/rightDrawerSlice'
-import { RIGHT_DRAWER_TYPES } from '@/helper/constants'
+import { useAuth } from '@/providers/auth'
+import PowerIcon from '@heroicons/react/16/solid/PowerIcon'
 
 interface HeaderProps {
   contentRef: React.RefObject<HTMLElement>
 }
 
 function Header({ contentRef }: HeaderProps): JSX.Element {
-  const { noOfNotifications, pageTitle, newNotificationMessage, newNotificationStatus } = useAppSelector(
-    (state) => state.header
-  )
-  const [currentTheme, setCurrentTheme] = useState<string | null>(localStorage.getItem('theme'))
-
+  const { pageTitle } = useAppSelector((state) => state.header)
   const dispatch = useAppDispatch()
+  const { authLogout } = useAuth()
 
-  useEffect(() => {
-    console.log(newNotificationMessage)
-    if (newNotificationMessage !== '') {
-      console.log('herer')
-      if (newNotificationStatus == 1) {
-        toast.success(newNotificationMessage)
-      } else {
-        toast.error(newNotificationMessage)
-      }
-      dispatch(removeNotificationMessage())
-    }
-  }, [newNotificationMessage])
-
-  //  Scroll back to top on new page load
   useEffect(() => {
     if (contentRef.current) {
       ;(contentRef.current as HTMLDivElement).scroll({
@@ -46,20 +23,9 @@ function Header({ contentRef }: HeaderProps): JSX.Element {
     }
   }, [pageTitle])
 
-  useEffect(() => {
-    themeChange(false)
-    if (currentTheme === null) {
-      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        setCurrentTheme('dark')
-      } else {
-        setCurrentTheme('light')
-      }
-    }
-  }, [])
-
-  // Opening right sidebar for notification
-  const openNotification = (): void => {
-    dispatch(openRightDrawer({ header: 'Notifications', bodyType: RIGHT_DRAWER_TYPES.NOTIFICATION, extraObject: {} }))
+  const logoutUser = async () => {
+    console.log('here')
+    await authLogout()
   }
 
   return (
@@ -73,28 +39,9 @@ function Header({ contentRef }: HeaderProps): JSX.Element {
       </div>
 
       <div className="flex-none">
-        {/* Light and dark theme selection toggle */}
-        <label className="swap">
-          <input type="checkbox" />
-          <SunIcon
-            data-set-theme="light"
-            data-act-class="ACTIVECLASS"
-            className={`fill-current w-6 h-6 ${currentTheme === 'dark' ? 'swap-on' : 'swap-off'}`}
-          />
-          <MoonIcon
-            data-set-theme="dark"
-            data-act-class="ACTIVECLASS"
-            className={`fill-current w-6 h-6 ${currentTheme === 'light' ? 'swap-on' : 'swap-off'}`}
-          />
-        </label>
-
-        {/* Notification icon */}
-        <button className="btn btn-ghost mr-4 ml-2 btn-circle" onClick={openNotification}>
+        <button className="btn btn-ghost mr-4 ml-2 btn-circle" onClick={() => logoutUser()}>
           <div className="indicator">
-            <BellIcon className="h-6 w-6" />
-            {noOfNotifications > 0 ? (
-              <span className="indicator-item badge badge-secondary badge-sm">{noOfNotifications}</span>
-            ) : null}
+            <PowerIcon className="h-6 w-6" />
           </div>
         </button>
       </div>

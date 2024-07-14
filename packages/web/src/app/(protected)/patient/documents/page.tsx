@@ -2,13 +2,14 @@
 import { useEffect, useState } from 'react'
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon'
 import { useAppDispatch } from '@/lib/hooks'
-import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
+import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
 import { openModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import Link from 'next/link'
 import Image from 'next/image'
+import Head from 'next/head'
 
 interface DocumentsData {
   createdAt: string
@@ -64,10 +65,6 @@ function Documents() {
     })
   }, [patientFilesData])
 
-  const modalButton = () => {
-    console.log('Hhllo')
-  }
-
   useEffect(() => {
     dispatch(() => {
       console.log({ patientFilesBlobData })
@@ -75,7 +72,6 @@ function Documents() {
         dispatch(
           openModal({
             title: 'Image Viewer',
-            bodyType: MODAL_BODY_TYPES.DEFAULT,
             bodyContent: (
               <>
                 {patientFilesBlobData?.fetchPatientFileBlob && (
@@ -99,15 +95,11 @@ function Documents() {
     console.log({ selectedFileId })
   }
 
-  const shareCurrentDocument = (index: number) => {
-    console.log(documentsData[index])
-    console.log(documentsData[index].id)
-    setSelectedFileId(documentsData[index].id)
-    console.log({ selectedFileId })
-  }
-
   return (
     <>
+      <Head>
+        <title>{APP_NAME_TITLE} | Patient - Documents</title>
+      </Head>
       <TitleCard title="Medical Documents" topMargin="mt-2">
         {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
         {documentsData?.length > 0 && (

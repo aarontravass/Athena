@@ -1,9 +1,10 @@
 'use client'
 import ErrorText from '@/components/typography/error-text'
 import SuccessText from '@/components/typography/success-text'
-import { APP_NAME } from '@/helper/constants'
+import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
 import { PatientsListData } from '@/lib/models'
 import { gql, useMutation, useQuery } from '@apollo/client'
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 
 const PatientDashboard = () => {
@@ -72,6 +73,9 @@ const PatientDashboard = () => {
 
   return (
     <>
+      <Head>
+        <title>{APP_NAME_TITLE} | Doctors - Add Patient</title>
+      </Head>
       <div className="form-control w-full mt-4">
         <label className="label">
           <p>Select a patient to add to your list</p>

@@ -1,9 +1,9 @@
+'use client'
 import { API_URL } from '@/helper/constants'
 import { ApolloClient, InMemoryCache, HttpLink, ApolloLink, concat } from '@apollo/client'
 
-const apiUrl = API_URL
-console.log({ API_URL })
 const getTokenForApi = (appTokenName: string) => {
+  console.log({ API_URL })
   const token = localStorage.getItem(appTokenName)
   console.log({ appTokenName })
   console.log('AuthToken', { token })

@@ -1,9 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
-import EyeIcon from '@heroicons/react/24/outline/EyeIcon'
 import { useAppDispatch } from '@/lib/hooks'
-import { APP_NAME, MODAL_BODY_TYPES } from '@/helper/constants'
-import { openModal } from '@/components/features/common/modalSlice'
+import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
@@ -11,6 +9,7 @@ import SuccessText from '@/components/typography/success-text'
 import DocumentDuplicateIcon from '@heroicons/react/24/solid/DocumentDuplicateIcon'
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon'
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon'
+import Head from 'next/head'
 
 interface ShareTokenData {
   createdAt: string
@@ -113,6 +112,9 @@ function ShareDocuments({ params }: { params: { id: string } }) {
 
   return (
     <>
+      <Head>
+        <title>{APP_NAME_TITLE} | Patient - Share Token Documents</title>
+      </Head>
       <TitleCard
         title={'Tokens ' + fileId}
         topMargin="mt-2"

@@ -1,16 +1,10 @@
-// app/[workspaceId]/layout.tsx
 'use client'
 
 import React, { useEffect, useRef } from 'react'
-import type { Metadata } from 'next'
-import { useAppDispatch, useAppSelector } from '@/lib/hooks'
 import { useRouter } from 'next/navigation'
-import auth from '@/lib/auth'
-import { ToastContainer } from 'react-toastify'
 import { useAuth } from '@/providers/auth'
 import Header from '@/components/containers/header'
 import LeftSidebar from '@/components/containers/left-sidebar'
-import RightSidebar from '@/components/containers/right-sidebar'
 import ModalLayout from '@/components/containers/modal-layout'
 
 interface LayoutProps {
@@ -20,9 +14,7 @@ interface LayoutProps {
 
 export default function ProtectedLayout({ children, params }: LayoutProps) {
   const { isAuthenticated, isLoading } = useAuth()
-
   const router = useRouter()
-  const dispatch = useAppDispatch()
   const mainContentRef = useRef(null)
 
   useEffect(() => {
@@ -56,12 +48,6 @@ export default function ProtectedLayout({ children, params }: LayoutProps) {
         </div>
         <LeftSidebar />
       </div>
-
-      {/* Right drawer - containing secondary content like notifications list etc.. */}
-      <RightSidebar />
-
-      {/* Notification layout container */}
-      <ToastContainer />
 
       {/* Modal layout container */}
       <ModalLayout />
