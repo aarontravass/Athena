@@ -46,6 +46,9 @@ jobs:
       - name: Login to ghcr.io
         run: docker login ghcr.io -u aarontravass --password '${{ secrets.GITHUB_TOKEN }}'
 
+      - name: Login to heroku
+        run: docker login registry.heroku.com -u ${{secrets.HEROKU_REGISTRY_USERNAME}} --password ${{secrets.HEROKU_REGISTRY_PASSWORD}}
+
       - name: Build platform image
         run: docker build -t ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}} --target platform .
 
@@ -63,3 +66,30 @@ jobs:
 
       - name: Notify Render for upload deploy
         run: curl -G --data-urlencode "imgURL=ghcr.io/aarontravass/medihacks2024-upload:${{github.sha}}"  ${{secrets.RENDER_UPLOAD_DEPLOY_HOOK_URL}}
+
+      - name: Tag platform image to heroku
+        run: docker tag ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}} registry.heroku.com/athena-platform/web
+
+      - name: Tag upload image to heroku
+        run: docker tag ghcr.io/aarontravass/medihacks2024-upload:${{github.sha}} registry.heroku.com/athena-upload/web
+
+      - name: Push upload image to heroku
+        run: docker push registry.heroku.com/athena-upload/web
+
+      - name: Push platform image to heroku
+        run: docker push registry.heroku.com/athena-platform/web
+
+      - name: Login to Heroku Container registry
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:login
+
+      - name: Release platform
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web -a athena-platform
+
+      - name: Release upload
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: heroku container:release web -a athena-upload

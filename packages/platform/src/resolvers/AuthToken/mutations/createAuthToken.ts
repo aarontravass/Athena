@@ -34,14 +34,16 @@ builder.mutationField('createAuthToken', (t) =>
             email: userData.email
           }
         })
-        if (role == UserRole.Patient) await createBucket(user.id)
-        await prisma.patientStorage.create({
-          data: {
-            patientId: user.id,
-            maxSpace: 500 * 1000 * 1000, // 500 MB
-            usedSpace: 0
-          }
-        })
+        if (role == UserRole.Patient) {
+          await createBucket(user.id)
+          await prisma.patientStorage.create({
+            data: {
+              patientId: user.id,
+              maxSpace: 500 * 1000 * 1000, // 500 MB
+              usedSpace: 0
+            }
+          })
+        }
       }
       const { authToken, refreshToken } = await generateAuthAndRefreshTokens(user)
 
