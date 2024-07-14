@@ -71,3 +71,9 @@ jobs:
 
       - name: Tag upload image to heroku
         run: docker tag ghcr.io/aarontravass/medihacks2024-upload:${{github.sha}} registry.heroku.com/athena-upload/web
+
+      - name: Push upload image to heroku
+        run: docker push registry.heroku.com/athena-upload/web
+
+      - name: Push platform image to heroku
+        run: docker push registry.heroku.com/athena-platform/web
