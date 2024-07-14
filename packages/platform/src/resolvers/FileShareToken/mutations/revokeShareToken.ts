@@ -1,4 +1,4 @@
-import { UserRole } from '@medihacks/prisma'
+import { UserRole } from '@athena/prisma'
 import { builder } from '../../../builder'
 import { prisma } from '../../../prisma'
 

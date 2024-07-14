@@ -1,4 +1,4 @@
-import { UserRole } from '@medihacks/prisma'
+import { UserRole } from '@athena/prisma'
 import { builder } from '../../../builder'
 import { prisma } from '../../../prisma'
 import { GraphQLError } from 'graphql'
@@ -29,7 +29,7 @@ builder.mutationField('createShareToken', (t) =>
         },
         FILE_TOKEN_JWT_KEY!,
         {
-          issuer: 'medihacks',
+          issuer: 'athena',
           expiresIn: ttl
         }
       )

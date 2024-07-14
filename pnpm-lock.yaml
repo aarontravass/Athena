@@ -60,12 +60,12 @@ importers:
 
   packages/platform:
     dependencies:
+      '@athena/prisma':
+        specifier: workspace:^
+        version: link:../prisma
       '@aws-sdk/client-s3':
         specifier: 3.47.0
         version: 3.47.0(@aws-sdk/signature-v4-crt@3.609.0)
-      '@medihacks/prisma':
-        specifier: workspace:^
-        version: link:../prisma
       '@pothos/core':
         specifier: ^3.41.2
         version: 3.41.2(graphql@16.9.0)
@@ -130,6 +130,9 @@ importers:
 
   packages/upload:
     dependencies:
+      '@athena/prisma':
+        specifier: workspace:^
+        version: link:../prisma
       '@aws-sdk/client-s3':
         specifier: 3.47.0
         version: 3.47.0(@aws-sdk/signature-v4-crt@3.609.0)
@@ -139,9 +142,6 @@ importers:
       '@fastify/multipart':
         specifier: ^8.3.0
         version: 8.3.0
-      '@medihacks/prisma':
-        specifier: workspace:^
-        version: link:../prisma
       fastify:
         specifier: ^4.28.1
         version: 4.28.1
