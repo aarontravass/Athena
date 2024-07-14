@@ -6,6 +6,7 @@ import { generateAuthAndRefreshTokens } from '../../../utils'
 import { getUserFromPrivy } from '../../../privy'
 import { createBucket } from '../../../filebase'
 import { UserRoleEnum } from '../../../schema/UserRole.enum'
+import { UserRole } from '@athena/prisma'
 
 builder.mutationField('createAuthToken', (t) =>
   t.prismaField({
@@ -33,7 +34,7 @@ builder.mutationField('createAuthToken', (t) =>
             email: userData.email
           }
         })
-        await createBucket(user.id)
+        if (role == UserRole.Patient) await createBucket(user.id)
         await prisma.patientStorage.create({
           data: {
             patientId: user.id,

@@ -1,3 +1,3 @@
-import { PrismaClient } from '@medihacks/prisma'
+import { PrismaClient } from '@athena/prisma'
 
 export const prisma = new PrismaClient({})

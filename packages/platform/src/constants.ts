@@ -15,3 +15,4 @@ export const FILE_TOKEN_JWT_KEY = process.env.FILE_TOKEN_JWT_KEY
 export const CLIENT_URL = process.env.CLIENT_URL
 export const ED_SECRET_KEY = process.env.ED_SECRET_KEY
 export const UPLOAD_URL = process.env.UPLOAD_URL
+export const FILE_ENCRYPTION_KEY = process.env.FILE_ENCRYPTION_KEY

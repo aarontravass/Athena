@@ -2,7 +2,7 @@ import { CustomContext } from '../builder'
 import { verifyAuthToken } from '../privy'
 import { prisma } from '../prisma'
 import { parseUCAN, verifyUCAN } from '../ucan'
-import { UserRole } from '@medihacks/prisma'
+import { UserRole } from '@athena/prisma'
 
 export const fetchPrivyDidFromAuth = (authToken: string) =>
   verifyAuthToken(authToken)

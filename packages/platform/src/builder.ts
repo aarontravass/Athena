@@ -1,4 +1,4 @@
-import { Prisma, UserRole } from '@medihacks/prisma'
+import { Prisma, UserRole } from '@athena/prisma'
 import SchemaBuilder from '@pothos/core'
 import PrismaPlugin from '@pothos/plugin-prisma'
 import { GraphQLError } from 'graphql'
@@ -7,7 +7,7 @@ import { YogaInitialContext } from 'graphql-yoga'
 import { prisma } from './prisma'
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth'
 import ValidationPlugin from '@pothos/plugin-validation'
-import type PrismaTypes from '@medihacks/prisma/pothos-types'
+import type PrismaTypes from '@athena/prisma/pothos-types'
 import { hasRole } from './validation/auth'
 
 export interface CustomContext extends YogaInitialContext {

@@ -1,6 +1,6 @@
 import * as ucans from '@ucans/ucans'
 import { ED_SECRET_KEY, ORG_DID } from './constants'
-import { User, UserRole } from '@medihacks/prisma'
+import { User, UserRole } from '@athena/prisma'
 import { prisma } from './prisma'
 import { CustomContext } from './builder'
 

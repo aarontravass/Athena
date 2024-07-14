@@ -2,6 +2,8 @@ import { GraphQLError } from 'graphql'
 import { builder } from '../../../builder'
 import { prisma } from '../../../prisma'
 import { fetchFileAsBase64 } from '../../../filebase'
+import jsonwebtoken from 'jsonwebtoken'
+import { FILE_TOKEN_JWT_KEY } from '../../../constants'
 
 builder.queryField('viewSharedFileBlob', (t) =>
   t.string({
@@ -17,7 +19,14 @@ builder.queryField('viewSharedFileBlob', (t) =>
       })
       if (!shareToken) throw new GraphQLError('You do not have access to view this resource!')
 
-      return fetchFileAsBase64(shareToken.patientFile)
+      try {
+        jsonwebtoken.verify(token, FILE_TOKEN_JWT_KEY!, {
+          issuer: 'athena'
+        })
+        return fetchFileAsBase64(shareToken.patientFile)
+      } catch (error) {
+        throw new GraphQLError('This link has expired')
+      }
     }
   })
 )

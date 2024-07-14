@@ -12,8 +12,10 @@ const fastify = Fastify({
 fastify.register(FastifyMultipart)
 await fastify.register(FastifyCors, {
   origin: true,
-  methods: ['POST']
+  methods: ['POST', 'GET', 'HEAD']
 })
+
+fastify.get('/', () => 'hello world')
 
 fastify.post('/upload', async (req, res) => {
   const token = (req.query as Record<string, string>).token
@@ -51,7 +53,7 @@ fastify.post('/upload', async (req, res) => {
   return res.status(200).send({ success: true })
 })
 
-fastify.listen({ port: PORT }, (err) => {
+fastify.listen({ port: PORT, host: '0.0.0.0' }, (err) => {
   if (err) throw err
   console.log(`server listening on ${PORT}`)
 })
