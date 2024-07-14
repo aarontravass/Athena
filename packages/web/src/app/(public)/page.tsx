@@ -10,16 +10,13 @@ import mainLogo from '@/../public/images/login/logo.svg'
 import { APP_NAME, APP_NAME_TITLE, PRIVY_APP_NAME, USER_ROLE, USER_ROLES } from '@/helper/constants'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/providers/auth'
-import { loadEnvFile } from 'process'
-
-loadEnvFile
 
 const LoginPage = (): JSX.Element => {
   const [isPatient, setIsPatient] = useState<boolean>(true)
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [errorMessage, setErrorMessage] = useState<string>('')
   const { ready, authenticated, getAccessToken } = usePrivy()
-  const { authLogin } = useAuth()
+  const { authLogin, authLogout } = useAuth()
 
   const REGISTER_PATIENT_USER = gql`
     mutation createAuthToken($role: UserRole!) {
@@ -44,12 +41,16 @@ const LoginPage = (): JSX.Element => {
       if (!authenticated) {
         setIsLoading(false)
         console.log('take')
-        console.log('NEXT_PUBLIC_API_URL', process.env.NEXT_PUBLIC_API_URL)
-        console.log('NEXT_PUBLIC_WEB_URL', process.env.NEXT_PUBLIC_WEB_URL)
         console.log({ ready, authenticated, isLoading })
       }
     }
   }
+
+  useEffect(() => {
+    console.log('hello world')
+    authLogout()
+  }, [])
+
   useEffect(() => {
     console.log('hello world')
     readyAndNoAuthentication()
@@ -103,12 +104,12 @@ const LoginPage = (): JSX.Element => {
     setIsLoading(true)
     login()
   }
-  if (!ready || (ready && authenticated))
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    )
+  // if (!ready || (ready && authenticated))
+  //   return (
+  //     <div className="flex items-center justify-center h-screen">
+  //       <span className="loading loading-spinner loading-lg"></span>
+  //     </div>
+  //   )
   return (
     <>
       <Head>
