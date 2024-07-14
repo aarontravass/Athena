@@ -16,6 +16,9 @@ interface ShareTokenData {
   id: string
   token: string
   updatedAt: string
+  patientFile: {
+    fileName: string
+  }
 }
 
 function ShareDocuments({ params }: { params: { id: string } }) {
@@ -32,6 +35,9 @@ function ShareDocuments({ params }: { params: { id: string } }) {
         token
         createdAt
         updatedAt
+        patientFile {
+          fileName
+        }
       }
     }
   `
@@ -116,7 +122,7 @@ function ShareDocuments({ params }: { params: { id: string } }) {
         <title>{APP_NAME_TITLE} | Patient - Share Token Documents</title>
       </Head>
       <TitleCard
-        title={'Tokens ' + fileId}
+        title={'Tokens - ' + (shareTokenList?.length > 0 ? shareTokenList[0].patientFile.fileName : '')}
         topMargin="mt-2"
         TopSideButtons={
           <div className="inline-block float-right">
@@ -126,7 +132,7 @@ function ShareDocuments({ params }: { params: { id: string } }) {
           </div>
         }
       >
-        {!shareTokenList?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
+        {!shareTokenList?.length && <ErrorText styleClass="mt-8">{'No tokens found for this documents'}</ErrorText>}
         {shareTokenList?.length > 0 && (
           <div className="overflow-x-auto w-full">
             <table className="table w-full">
