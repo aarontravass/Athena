@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@/lib/hooks'
-import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
+import { APP_NAME, APP_NAME_TITLE, WEB_URL } from '@/helper/constants'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
@@ -135,29 +135,25 @@ function ShareDocuments({ params }: { params: { id: string } }) {
                   <th>Sr No</th>
                   <th>Created At</th>
                   <th>Updated At</th>
-                  <th>Copy Link</th>
                   <th>Open Link</th>
                   <th>Revoke</th>
                 </tr>
               </thead>
               <tbody>
-                {shareTokenList.map((doc: ShareTokenData, k: number) => (
+                {shareTokenList.map((shareToken: ShareTokenData, k: number) => (
                   <tr key={k}>
                     <td>{k + 1}</td>
-                    <td>{doc.createdAt}</td>
-                    <td>{doc.updatedAt}</td>
+                    <td>{shareToken.createdAt}</td>
+                    <td>{shareToken.updatedAt}</td>
                     <td>
                       <button className="btn btn-square btn-ghost">
-                        <DocumentDuplicateIcon className="w-5" />
+                        <a target="_blank" href={WEB_URL + '/view/' + shareToken.token}>
+                          <ArrowTopRightOnSquareIcon className="w-5" />
+                        </a>
                       </button>
                     </td>
                     <td>
-                      <button className="btn btn-square btn-ghost">
-                        <ArrowTopRightOnSquareIcon className="w-5" />
-                      </button>
-                    </td>
-                    <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => revokeShareToken(doc.id)}>
+                      <button className="btn btn-square btn-ghost" onClick={() => revokeShareToken(shareToken.id)}>
                         <TrashIcon className="w-5" />
                       </button>
                     </td>

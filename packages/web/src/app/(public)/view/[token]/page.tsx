@@ -10,6 +10,8 @@ import DocumentDuplicateIcon from '@heroicons/react/24/solid/DocumentDuplicateIc
 import TrashIcon from '@heroicons/react/24/solid/TrashIcon'
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon'
 import Head from 'next/head'
+import Image from 'next/image'
+import Header from '@/components/containers/header'
 
 interface ShareTokenData {
   createdAt: string
@@ -18,158 +20,52 @@ interface ShareTokenData {
   updatedAt: string
 }
 
-function ShareDocuments({ params }: { params: { id: string } }) {
-  const fileId = params.id
+function ShareDocuments({ params }: { params: { token: string } }) {
+  const shareToken = params.token
   const dispatch = useAppDispatch()
-  const [shareTokenList, setShareTokenList] = useState<ShareTokenData[]>([])
-  const [errorMessage, setErrorMessage] = useState<string>('')
-  const [successMessage, setSuccessMessage] = useState<string>('')
+  const [fileBase64, setFileBase64] = useState<string>('')
 
-  const LIST_SHARE_TOKENS = gql`
-    query ListShareTokens($fileId: ID!) {
-      listShareTokens(fileId: $fileId) {
-        id
-        token
-        createdAt
-        updatedAt
-      }
+  const VIEW_SHARE_BLOB = gql`
+    query ViewSharedFileBlob($token: String!) {
+      viewSharedFileBlob(token: $token)
     }
   `
 
-  const CREATE_SHARE_TOKEN = gql`
-    mutation CreateShareToken($fileId: ID!, $ttl: Int!) {
-      createShareToken(fileId: $fileId, ttl: $ttl)
-    }
-  `
-  const REVOKE_SHARE_TOKEN = gql`
-    mutation RevokeShareToken($tokenId: ID!) {
-      revokeShareToken(tokenId: $tokenId)
-    }
-  `
-
-  const {
-    data: listShareTokensData,
-    error: listShareTokensError,
-    refetch: listShareTokensRefetch
-  } = useQuery(LIST_SHARE_TOKENS, {
-    variables: { fileId },
+  const { data: viewSharedFileBlobData, error: viewSharedFileBlobError } = useQuery(VIEW_SHARE_BLOB, {
+    variables: { token: shareToken },
     context: { appTokenName: APP_NAME + ':token' }
   })
 
-  const [createShareTokenGql, { data: createShareTokenData, error: createShareTokenError }] = useMutation(
-    CREATE_SHARE_TOKEN,
-    {
-      context: { appTokenName: APP_NAME + ':token' }
-    }
-  )
-
-  const [revokeShareTokenGql, { data: revokeShareTokenData, error: revokeShareTokenError }] = useMutation(
-    REVOKE_SHARE_TOKEN,
-    {
-      context: { appTokenName: APP_NAME + ':token' }
-    }
-  )
-
   useEffect(() => {
     dispatch(() => {
-      const docsData = listShareTokensData?.listShareTokens
-      if (docsData) {
-        console.log({ docsData })
-        setShareTokenList(docsData)
+      const base64 = viewSharedFileBlobData?.viewSharedFileBlob
+      console.log({ base64 })
+      if (base64) {
+        setFileBase64(base64)
       }
     })
-  }, [listShareTokensData, revokeShareTokenData])
-
-  const createShareToken = async () => {
-    setSuccessMessage('')
-    setErrorMessage('')
-    await createShareTokenGql({ variables: { fileId, ttl: 3600 * 5 } })
-      .then(async (result) => {
-        console.log({ result })
-        setSuccessMessage('Token created successfully')
-        await listShareTokensRefetch()
-      })
-      .catch((error) => {
-        console.error({ error })
-        setErrorMessage(error?.message)
-      })
-  }
-
-  const revokeShareToken = async (tokenId: string) => {
-    setSuccessMessage('')
-    setErrorMessage('')
-    await revokeShareTokenGql({ variables: { tokenId } })
-      .then(async (result) => {
-        console.log({ result })
-        setSuccessMessage('Token deleted successfully')
-        await listShareTokensRefetch()
-      })
-      .catch((error) => {
-        console.error({ error })
-        setErrorMessage(error?.message)
-      })
-  }
+  }, [viewSharedFileBlobData])
 
   return (
     <>
-      <Head>
-        <title>{APP_NAME_TITLE} | Patient - Share Token Documents</title>
-      </Head>
-      <TitleCard
-        title={'Tokens ' + fileId}
-        topMargin="mt-2"
-        TopSideButtons={
-          <div className="inline-block float-right">
-            <button className="btn px-6 btn-sm normal-case btn-primary" onClick={createShareToken}>
-              Create Token
-            </button>
-          </div>
-        }
-      >
-        {!shareTokenList?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
-        {shareTokenList?.length > 0 && (
-          <div className="overflow-x-auto w-full">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Sr No</th>
-                  <th>Created At</th>
-                  <th>Updated At</th>
-                  <th>Copy Link</th>
-                  <th>Open Link</th>
-                  <th>Revoke</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shareTokenList.map((doc: ShareTokenData, k: number) => (
-                  <tr key={k}>
-                    <td>{k + 1}</td>
-                    <td>{doc.createdAt}</td>
-                    <td>{doc.updatedAt}</td>
-                    <td>
-                      <button className="btn btn-square btn-ghost">
-                        <DocumentDuplicateIcon className="w-5" />
-                      </button>
-                    </td>
-                    <td>
-                      <button className="btn btn-square btn-ghost">
-                        <ArrowTopRightOnSquareIcon className="w-5" />
-                      </button>
-                    </td>
-                    <td>
-                      <button className="btn btn-square btn-ghost" onClick={() => revokeShareToken(doc.id)}>
-                        <TrashIcon className="w-5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </TitleCard>
-      {errorMessage && <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>}
-      {successMessage && <SuccessText styleClass="mt-8">{successMessage}</SuccessText>}
+      <div className="drawer lg:drawer-open">
+        <input id="left-sidebar-drawer" type="checkbox" className="drawer-toggle" />
+        <div className="drawer-content flex flex-col ">
+          {/* <Header contentRef={} /> */}
+          <main className="flex-1 overflow-y-auto md:pt-4 pt-4 px-6  bg-base-200">
+            {fileBase64 && (
+              <Image
+                className="m-auto"
+                alt="fileImage"
+                width={700}
+                height={700}
+                src={`data:image/*;base64,${fileBase64}`}
+              ></Image>
+            )}
+            <div className="h-16"></div>
+          </main>
+        </div>
+      </div>
     </>
   )
 }
