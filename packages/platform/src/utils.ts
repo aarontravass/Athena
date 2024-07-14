@@ -1,4 +1,4 @@
-import { User } from '@medihacks/prisma'
+import { User } from '@athena/prisma'
 import { createDecipheriv, randomUUID } from 'node:crypto'
 import { generateUCAN } from './ucan'
 import { FILE_ENCRYPTION_KEY } from './constants'

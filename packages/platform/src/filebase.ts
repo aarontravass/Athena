@@ -1,6 +1,6 @@
 import { S3 } from '@aws-sdk/client-s3'
 import { FILEBASE_ACCESS_KEY_ID, FILEBASE_S3_URL, FILEBASE_SECRET_ACCESS_KEY } from './constants'
-import { PatientFile } from '@medihacks/prisma'
+import { PatientFile } from '@athena/prisma'
 import { GraphQLError } from 'graphql'
 import { streamToBase64 } from './utils'
 

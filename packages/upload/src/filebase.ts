@@ -1,6 +1,6 @@
 import { S3 } from '@aws-sdk/client-s3'
 import { FILEBASE_ACCESS_KEY_ID, FILEBASE_S3_URL, FILEBASE_SECRET_ACCESS_KEY } from './constants'
-import { User } from '@medihacks/prisma'
+import { User } from '@athena/prisma'
 import type { MultipartFile } from '@fastify/multipart'
 import { encryptBuffer } from './utils'
 

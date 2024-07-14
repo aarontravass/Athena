@@ -1,5 +1,5 @@
 {
-  "name": "@medihacks/platform",
+  "name": "@athena/platform",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "aarontravass <aaron.travass@hotmail.com>",
@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.47.0",
-    "@medihacks/prisma": "workspace:^",
+    "@athena/prisma": "workspace:^",
     "@pothos/core": "^3.41.2",
     "@pothos/plugin-prisma": "^3.65.3",
     "@pothos/plugin-scope-auth": "^3.22.1",

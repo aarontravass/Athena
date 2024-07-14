@@ -6,7 +6,7 @@ import { generateAuthAndRefreshTokens } from '../../../utils'
 import { getUserFromPrivy } from '../../../privy'
 import { createBucket } from '../../../filebase'
 import { UserRoleEnum } from '../../../schema/UserRole.enum'
-import { UserRole } from '@medihacks/prisma'
+import { UserRole } from '@athena/prisma'
 
 builder.mutationField('createAuthToken', (t) =>
   t.prismaField({

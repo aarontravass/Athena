@@ -1,5 +1,5 @@
 {
-  "name": "@medihacks/upload",
+  "name": "@athena/upload",
   "version": "0.0.0",
   "description": "> TODO: description",
   "author": "aarontravass <aaron.travass@hotmail.com>",
@@ -26,7 +26,7 @@
     "@aws-sdk/client-s3": "3.47.0",
     "@fastify/cors": "^9.0.1",
     "@fastify/multipart": "^8.3.0",
-    "@medihacks/prisma": "workspace:^",
+    "@athena/prisma": "workspace:^",
     "fastify": "^4.28.1"
   },
   "devDependencies": {
