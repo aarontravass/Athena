@@ -76,8 +76,11 @@ function Documents() {
               <>
                 {patientFilesBlobData?.fetchPatientFileBlob && (
                   <Image
+                    className="m-auto"
                     alt="fileImage"
-                    src={`data:image/*;base64,${patientFilesBlobData?.fetchPatientFileBlob}`}
+                    width={700}
+                    height={700}
+                    src={`data:image/*;base64,${patientFilesBlobData?.fetchPatientFileBlob?.base64}`}
                   ></Image>
                 )}
               </>

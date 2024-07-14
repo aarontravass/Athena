@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch } from '@/lib/hooks'
 import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
-import { openModal } from '@/components/features/common/modalSlice'
+import { openModal, closeModal, updateModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
@@ -103,26 +103,43 @@ function Documents() {
           title: 'Upload A File',
           bodyContent: (
             <>
-              <form onSubmit={uploadFileDocument} encType="multipart/form-data">
-                <div className="grid">
-                  <input
-                    type="file"
-                    className="file-input file-input-bordered file-input-primary w-full"
-                    onChange={onFileInputChange}
-                  />
-                </div>
-                <div className="grid mt-7">
-                  <button type="submit" disabled={uploadLoading} className="btn px-6 btn-sm normal-case btn-primary">
-                    Upload File
-                  </button>
-                  {errorMessage && <ErrorText styleClass="mt-8">{errorMessage}</ErrorText>}
-                </div>
-              </form>
+              <div className="w-3/5 m-auto">
+                <form onSubmit={uploadFileDocument}>
+                  <div className="grid">
+                    <input
+                      type="file"
+                      className="file-input file-input-bordered file-input-primary w-full"
+                      onChange={onFileInputChange}
+                    />
+                  </div>
+                  <div className="grid mt-7">
+                    <button type="submit" className="btn px-6 btn-md normal-case btn-primary">
+                      Upload File
+                    </button>
+                  </div>
+                </form>
+              </div>
             </>
-          )
+          ),
+          response: <></>
         })
       )
     })
+  }
+
+  const closeUploadModal = () => {
+    dispatch(() => {
+      dispatch(closeModal())
+    })
+  }
+
+  const updateUploadModal = (responseData: JSX.Element) => {
+    console.log({ responseData })
+    dispatch(
+      updateModal({
+        response: responseData
+      })
+    )
   }
 
   const uploadFileDocument = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -130,7 +147,14 @@ function Documents() {
     setUploadLoading(true)
     console.log('uploadFileDocument Hello world')
     console.log({ currentFileUploadData, selectedPatientId })
-    if (!currentFileUploadData) return
+    if (!currentFileUploadData) {
+      updateUploadModal(
+        <>
+          <ErrorText styleClass="mt-8">File has been not uploaded.</ErrorText>
+        </>
+      )
+      return
+    }
     // try {
     await generatePreSignedUploadUrlGql({
       variables: { userId: selectedPatientId }
@@ -149,6 +173,7 @@ function Documents() {
             })
               .then((uploadRes) => {
                 console.log({ uploadRes })
+                closeUploadModal()
               })
               .catch((uploadError) => {
                 console.log({ uploadError })
@@ -172,7 +197,7 @@ function Documents() {
       </Head>
       <div className="form-control w-full mt-4">
         <label className="label">
-          <p>Select a patient to add to your list</p>
+          <p>Select a patient to upload documents</p>
         </label>
         {patientsList.length > 0 && (
           <select onChange={onPatientChange} defaultValue="" className="select select-bordered w-full max-w-md">
