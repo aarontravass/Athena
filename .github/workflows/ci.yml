@@ -52,7 +52,7 @@ jobs:
       - name: Push platform image to ghcr.io
         run: docker push ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}}
 
-      - name: Notify Render
+      - name: Notify Render for platform deploy
         run: curl -G --data-urlencode "imgURL=ghcr.io/aarontravass/medihacks2024-platform:${{github.sha}}"  ${{secrets.RENDER_DEPLOY_HOOK_URL}}
 
       - name: Build upload image
@@ -60,3 +60,6 @@ jobs:
 
       - name: Push upload image to ghcr.io
         run: docker push ghcr.io/aarontravass/medihacks2024-upload:${{github.sha}}
+
+      - name: Notify Render for upload deploy
+        run: curl -G --data-urlencode "imgURL=ghcr.io/aarontravass/medihacks2024-upload:${{github.sha}}"  ${{secrets.RENDER_UPLOAD_DEPLOY_HOOK_URL}}
