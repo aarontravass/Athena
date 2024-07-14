@@ -8,6 +8,7 @@ import { gql, useMutation, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
 import { DocumentsListData, PatientsListData } from '@/lib/models'
 import Head from 'next/head'
+import SuccessText from '@/components/typography/success-text'
 
 function Documents() {
   const dispatch = useAppDispatch()
@@ -53,7 +54,11 @@ function Documents() {
     context: { appTokenName: APP_NAME + ':token' }
   })
 
-  const { data: patientsListData, error: patientsListDataError } = useQuery(FETCH_PATIENTS, {
+  const {
+    data: patientsListData,
+    error: patientsListDataError,
+    refetch: patientsListDataRefetch
+  } = useQuery(FETCH_PATIENTS, {
     context: { appTokenName: APP_NAME + ':token' }
   })
 
@@ -131,6 +136,7 @@ function Documents() {
     dispatch(() => {
       dispatch(closeModal())
     })
+    patientsListDataRefetch()
   }
 
   const updateUploadModal = (responseData: JSX.Element) => {
@@ -166,27 +172,51 @@ function Documents() {
           currentFileUploadData?.arrayBuffer().then(async (arrayBufferData) => {
             const blobData = new Blob([arrayBufferData], { type: currentFileUploadData?.type })
             formData.append('file', blobData, currentFileUploadData?.name)
-
             await fetch(uploadUrlApi, {
               body: formData,
               method: 'POST'
             })
               .then((uploadRes) => {
                 console.log({ uploadRes })
-                closeUploadModal()
+                if (uploadRes.status === 200) {
+                  updateUploadModal(
+                    <>
+                      <SuccessText styleClass="mt-8">File Uploaded successfully.</SuccessText>
+                    </>
+                  )
+                  closeUploadModal()
+                } else {
+                  updateUploadModal(
+                    <>
+                      <ErrorText styleClass="mt-8">{uploadRes.statusText}</ErrorText>
+                    </>
+                  )
+                }
               })
               .catch((uploadError) => {
                 console.log({ uploadError })
+                updateUploadModal(
+                  <>
+                    <ErrorText styleClass="mt-8">{JSON.stringify(uploadError, null, 2)}</ErrorText>
+                  </>
+                )
               })
           })
         } else {
-          setErrorMessage('Upload URL is not valid')
+          updateUploadModal(
+            <>
+              <ErrorText styleClass="mt-8">Upload URL is not valid.</ErrorText>
+            </>
+          )
         }
-        console.log({ res, generatePreSignedUploadUrlData })
       })
       .catch((error) => {
         console.error({ error })
-        setErrorMessage(error?.message)
+        updateUploadModal(
+          <>
+            <ErrorText styleClass="mt-8">{error?.message}</ErrorText>
+          </>
+        )
       })
   }
 
@@ -230,6 +260,7 @@ function Documents() {
               <table className="table w-full">
                 <thead>
                   <tr>
+                    <th>Sr No</th>
                     <th>File Name</th>
                     <th>Created At</th>
                     <th>Updated At</th>
@@ -238,6 +269,7 @@ function Documents() {
                 <tbody>
                   {selectedPatient.patientFiles.map((doc: DocumentsListData, k: number) => (
                     <tr key={k}>
+                      <td>{k + 1}</td>
                       <td>{doc.fileName}</td>
                       <td>{doc.createdAt}</td>
                       <td>{doc.updatedAt}</td>

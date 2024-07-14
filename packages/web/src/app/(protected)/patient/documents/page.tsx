@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import EyeIcon from '@heroicons/react/24/outline/EyeIcon'
 import { useAppDispatch } from '@/lib/hooks'
 import { APP_NAME, APP_NAME_TITLE } from '@/helper/constants'
-import { openModal } from '@/components/features/common/modalSlice'
+import { openModal, updateModal } from '@/components/features/common/modalSlice'
 import TitleCard from '@/components/cards/title-card'
 import { gql, useQuery } from '@apollo/client'
 import ErrorText from '@/components/typography/error-text'
@@ -98,14 +98,22 @@ function Documents() {
     console.log({ selectedFileId })
   }
 
+  const updateUploadModal = (responseData: JSX.Element) => {
+    console.log({ responseData })
+    dispatch(
+      updateModal({
+        response: responseData
+      })
+    )
+  }
   return (
     <>
       <Head>
         <title>{APP_NAME_TITLE} | Patient - Documents</title>
       </Head>
-      <TitleCard title="Medical Documents" topMargin="mt-2">
-        {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
-        {documentsData?.length > 0 && (
+      {!documentsData?.length && <ErrorText styleClass="mt-8">{'No Documents Found'}</ErrorText>}
+      {documentsData?.length > 0 && (
+        <TitleCard title="Medical Documents" topMargin="mt-2">
           <div className="overflow-x-auto w-full">
             <table className="table w-full">
               <thead>
@@ -140,8 +148,8 @@ function Documents() {
               </tbody>
             </table>
           </div>
-        )}
-      </TitleCard>
+        </TitleCard>
+      )}
       {patientFilesError?.message && <ErrorText styleClass="mt-8">{patientFilesError.message}</ErrorText>}
       {patientFilesBlobError?.message && <ErrorText styleClass="mt-8">{patientFilesBlobError.message}</ErrorText>}
     </>

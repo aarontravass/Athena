@@ -27,10 +27,11 @@ export const modalSlice = createSlice({
         response?: JSX.Element
       }>
     ) => {
-      const { title, bodyContent } = action.payload
+      const { title, bodyContent, response } = action.payload
       state.isOpen = true
       if (title) state.title = title
       if (bodyContent) state.bodyContent = bodyContent
+      if (response) state.response = response
     },
     updateModal: (
       state,
@@ -45,7 +46,6 @@ export const modalSlice = createSlice({
       if (title) state.title = title
       if (bodyContent) state.bodyContent = bodyContent
       if (response) state.response = response
-      state.response = null
     },
     closeModal: (state) => {
       state.isOpen = false
