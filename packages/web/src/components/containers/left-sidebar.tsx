@@ -55,7 +55,7 @@ function LeftSidebar(props: LeftSidebarProps) {
         </button>
 
         <li className="mb-2 font-semibold text-xl">
-          <Link href="/welcome">
+          <Link href="/">
             <Image className="mask mask-squircle w-10" src={mainLogo} alt="DashWind Logo" />
             {APP_NAME_TITLE}
           </Link>
