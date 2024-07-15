@@ -55,6 +55,10 @@ Run web, server and upload package
 lerna run dev
 ```
 
+## Credits
+
+This project utilizes the admin-dashboard-nextjs-typescript-daisyui-template created by robbins23. https://github.com/robbins23/admin-dashboard-nextjs-typescript-daisyui-template
+
 ## License
 
 Licensed under [MIT](./LICENSE).
