@@ -19,7 +19,7 @@ Athena is the modern EMR and EHR open source storage solution based on IPFS. Bui
 
 ### Table of Contents
 
-- [Features](#core-features)
+- [Features](#features)
 - [Install](#install)
 - [License](#license)
 
